@@ -19,6 +19,7 @@ export class CustomerService {
     customers.forEach((customer) => {
       const newCustomer: CustomerModel = {
         id: customer.id,
+        name: customer.name,
         email: customer.email,
         creationDate: customer.creationDate,
         phoneNumber: customer.phoneNumber,

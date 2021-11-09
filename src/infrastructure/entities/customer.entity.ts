@@ -13,6 +13,9 @@ export class CustomerEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
+  @Column()
+  public name: string;
+
   @Column({ unique: true })
   public email: string;
 
