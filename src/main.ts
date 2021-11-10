@@ -4,6 +4,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: true,
+    methods: 'GET,PUT,PATCH,POST,DELETE',
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Example Swagger')

@@ -13,6 +13,9 @@ export class CustomerEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
+  @Column()
+  public name: string;
+
   @Column({ unique: true })
   public email: string;
 
@@ -31,4 +34,7 @@ export class CustomerEntity {
   @ManyToOne(() => SubscriptionEntity)
   @JoinColumn()
   public subscription: SubscriptionModel;
+
+  @Column()
+  public active: boolean;
 }
