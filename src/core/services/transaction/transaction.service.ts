@@ -13,7 +13,7 @@ export class TransactionService {
 
   async getAllTransactions(): Promise<TransactionModel[]> {
     const transactions = await this.transactionRepository.find({
-      relations: ['washtype', 'location', 'licenseplate'],
+      relations: ['washType', 'location', 'licensePlate'],
     });
     const transactionEntities: TransactionModel[] = JSON.parse(
       JSON.stringify(transactions),
