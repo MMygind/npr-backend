@@ -15,6 +15,16 @@ export class TransactionService {
     private companyService: CompanyService,
   ) {}
 
+  async getAllTransactions(): Promise<TransactionModel[]> {
+    const transactions = await this.transactionRepository.find({
+      relations: ['washType', 'location', 'licensePlate'],
+    });
+    const transactionEntities: TransactionModel[] = JSON.parse(
+      JSON.stringify(transactions),
+    );
+    return transactionEntities;
+  }
+
   async getTransactionById(id: number): Promise<TransactionModel> {
     const transaction = await this.transactionRepository.findOne(id, {
       relations: [
