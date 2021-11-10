@@ -23,6 +23,7 @@ export class TransactionService {
       JSON.stringify(transactions),
     );
     return transactionEntities;
+  }
 
   async getTransactionById(id: number): Promise<TransactionModel> {
     const transaction = await this.transactionRepository.findOne(id, {

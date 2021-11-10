@@ -6,11 +6,11 @@ import { Controller, Get, Param } from '@nestjs/common';
 export class TransactionsController {
   constructor(private service: TransactionService) {}
 
-
   @Get()
   @ApiResponse({ status: 200, description: 'Gets all transactions' })
   async getAllTransactions() {
     return await this.service.getAllTransactions();
+  }
 
   @Get(':id')
   async getTransactionById(@Param() params) {
