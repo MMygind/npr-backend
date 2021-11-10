@@ -17,20 +17,24 @@ export class CustomerService {
     });
     const newCustomers: CustomerModel[] = [];
     customers.forEach((customer) => {
-      const newCustomer: CustomerModel = {
-        id: customer.id,
-        name: customer.name,
-        email: customer.email,
-        creationDate: customer.creationDate,
-        phoneNumber: customer.phoneNumber,
-        subscription: customer.subscription,
-        active: customer.active,
-      };
-      newCustomers.push(newCustomer);
+      newCustomers.push(this.getCustomerWithoutPassword(customer));
     });
     const customerEntities: CustomerModel[] = JSON.parse(
       JSON.stringify(newCustomers),
     );
     return customerEntities;
+  }
+
+  getCustomerWithoutPassword(oldCustomer: CustomerModel): CustomerModel {
+    const newCustomer: CustomerModel = {
+      id: oldCustomer.id,
+      name: oldCustomer.name,
+      email: oldCustomer.email,
+      creationDate: oldCustomer.creationDate,
+      phoneNumber: oldCustomer.phoneNumber,
+      subscription: oldCustomer.subscription,
+      active: oldCustomer.active,
+    };
+    return newCustomer;
   }
 }
