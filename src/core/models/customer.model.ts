@@ -7,4 +7,5 @@ export interface CustomerModel {
   creationDate: Date;
   phoneNumber: string;
   subscription: SubscriptionModel;
+  active: boolean;
 }

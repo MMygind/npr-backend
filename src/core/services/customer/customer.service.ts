@@ -24,6 +24,7 @@ export class CustomerService {
         creationDate: customer.creationDate,
         phoneNumber: customer.phoneNumber,
         subscription: customer.subscription,
+        active: customer.active,
       };
       newCustomers.push(newCustomer);
     });

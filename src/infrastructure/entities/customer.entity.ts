@@ -34,4 +34,7 @@ export class CustomerEntity {
   @ManyToOne(() => SubscriptionEntity)
   @JoinColumn()
   public subscription: SubscriptionModel;
+
+  @Column()
+  public active: boolean;
 }
