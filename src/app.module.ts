@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './infrastructure/database.module';
 import { CustomerModule } from './api/customer.module';
+import { TransactionModule } from './api/transaction.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CustomerModule } from './api/customer.module';
     }),
     DatabaseModule,
     CustomerModule,
+    TransactionModule,
   ],
   controllers: [],
   providers: [],
