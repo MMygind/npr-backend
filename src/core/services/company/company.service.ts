@@ -11,7 +11,13 @@ export class CompanyService {
     private companyRepository: Repository<CompanyEntity>,
   ) {}
 
-  getCompanyWithoutPassword(oldCompany: CompanyModel): CompanyModel {
+  /**
+   * Takes company object with passwords properties,
+   * and constructs and returns new copy without password properties
+   * @param oldCompany with passwordHash and passwordSalt properties
+   * @returns newCompany a copy without those properties
+   */
+  getCompany(oldCompany: CompanyModel): CompanyModel {
     const newCompany: CompanyModel = {
       id: oldCompany.id,
       name: oldCompany.name,

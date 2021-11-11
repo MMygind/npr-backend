@@ -36,14 +36,12 @@ export class TransactionService {
         'licensePlate.customer.subscription',
       ],
     });
-    transaction.location.company =
-      this.companyService.getCompanyWithoutPassword(
-        transaction.location.company,
-      );
-    transaction.licensePlate.customer =
-      this.customerService.getCustomerWithoutPassword(
-        transaction.licensePlate.customer,
-      );
+    transaction.location.company = this.companyService.getCompany(
+      transaction.location.company,
+    );
+    transaction.licensePlate.customer = this.customerService.getCustomer(
+      transaction.licensePlate.customer,
+    );
     return transaction;
   }
 }

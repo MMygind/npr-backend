@@ -17,7 +17,7 @@ export class CustomerService {
     });
     const newCustomers: CustomerModel[] = [];
     customers.forEach((customer) => {
-      newCustomers.push(this.getCustomerWithoutPassword(customer));
+      newCustomers.push(this.getCustomer(customer));
     });
     const customerEntities: CustomerModel[] = JSON.parse(
       JSON.stringify(newCustomers),
@@ -25,7 +25,13 @@ export class CustomerService {
     return customerEntities;
   }
 
-  getCustomerWithoutPassword(oldCustomer: CustomerModel): CustomerModel {
+  /**
+   * Takes customer object with passwords properties,
+   * and constructs and returns new copy without password properties
+   * @param oldCustomer with passwordHash and passwordSalt properties
+   * @returns newCustomer a copy without those properties
+   */
+  getCustomer(oldCustomer: CustomerModel): CustomerModel {
     const newCustomer: CustomerModel = {
       id: oldCustomer.id,
       name: oldCustomer.name,
