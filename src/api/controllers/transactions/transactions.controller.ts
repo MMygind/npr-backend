@@ -1,5 +1,6 @@
 import { TransactionService } from '../../../core/services/transaction/transaction.service';
 import {
+  ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -21,6 +22,9 @@ export class TransactionsController {
   @Get(':id')
   @ApiOperation({ summary: 'Gets transaction with specified ID' })
   @ApiOkResponse({ description: 'Transaction with specified ID returned' })
+  @ApiBadRequestResponse({
+    description: 'Failed to get transaction as request was malformed',
+  })
   @ApiNotFoundResponse({ description: 'Transaction not found' })
   async getTransactionById(@Param('id') params: number) {
     return await this.service.getTransactionById(params);

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
 import { Repository } from 'typeorm';
@@ -22,6 +22,9 @@ export class TransactionService {
   }
 
   async getTransactionById(id: number): Promise<TransactionModel> {
+    if (id >= 0) {
+      throw new BadRequestException('Transaction ID must be a positive integer')
+    }
     const transaction = await this.transactionRepository.findOne(id, {
       relations: [
         'washType',
