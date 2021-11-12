@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
 import { Repository } from 'typeorm';
@@ -36,12 +36,9 @@ export class TransactionService {
         'licensePlate.customer.subscription',
       ],
     });
-    transaction.location.company = this.companyService.getCompany(
-      transaction.location.company,
-    );
-    transaction.licensePlate.customer = this.customerService.getCustomer(
-      transaction.licensePlate.customer,
-    );
+    if (!transaction) {
+      throw new NotFoundException(`Transaction with ID ${id} not found`);
+    }
     return transaction;
   }
 }

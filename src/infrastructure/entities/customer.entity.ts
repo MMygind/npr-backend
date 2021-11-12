@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { SubscriptionEntity } from './subscription.entity';
 import { SubscriptionModel } from '../../core/models/subscription.model';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'Customer' })
 export class CustomerEntity {
@@ -20,9 +21,11 @@ export class CustomerEntity {
   public email: string;
 
   @Column()
+  @Exclude()
   public passwordHash: string;
 
   @Column()
+  @Exclude()
   public passwordSalt: string;
 
   @Column()
