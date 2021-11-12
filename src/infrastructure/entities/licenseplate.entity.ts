@@ -16,7 +16,10 @@ export class LicenseplateEntity {
   @Column()
   public licensePlate: string;
 
-  @ManyToOne(() => CustomerEntity)
+  @ManyToOne(
+    () => CustomerEntity,
+    (customer: CustomerEntity) => customer.licensePlates,
+  )
   @JoinColumn()
   public customer: CustomerModel;
 }

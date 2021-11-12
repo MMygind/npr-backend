@@ -3,10 +3,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { SubscriptionEntity } from './subscription.entity';
 import { SubscriptionModel } from '../../core/models/subscription.model';
+import { LicenseplateEntity } from './licenseplate.entity';
+import { LicenseplateModel } from '../../core/models/licenseplate.model';
 
 @Entity({ name: 'Customer' })
 export class CustomerEntity {
@@ -34,6 +37,9 @@ export class CustomerEntity {
   @ManyToOne(() => SubscriptionEntity)
   @JoinColumn()
   public subscription: SubscriptionModel;
+
+  @OneToMany(() => LicenseplateEntity, (lp: LicenseplateEntity) => lp.customer)
+  public licensePlates: LicenseplateModel[];
 
   @Column()
   public active: boolean;
