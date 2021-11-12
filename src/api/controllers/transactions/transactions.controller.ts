@@ -1,5 +1,12 @@
 import { TransactionService } from '../../../core/services/transaction/transaction.service';
-import { ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { Controller, Get, Param } from '@nestjs/common';
 
 @Controller('transactions')
@@ -18,7 +25,13 @@ export class TransactionsController {
   }
 
   @Get(':id')
-  async getTransactionById(@Param() params) {
-    return await this.service.getTransactionById(params.id);
+  @ApiOperation({ summary: 'Gets transaction with specified ID' })
+  @ApiOkResponse({ description: 'Transaction with specified ID returned' })
+  @ApiBadRequestResponse({
+    description: 'Failed to get transaction as request was malformed',
+  })
+  @ApiNotFoundResponse({ description: 'Transaction not found' })
+  async getTransactionById(@Param('id') params: number) {
+    return await this.service.getTransaction(params);
   }
 }

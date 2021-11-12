@@ -10,15 +10,4 @@ export class CompanyService {
     @InjectRepository(CompanyEntity)
     private companyRepository: Repository<CompanyEntity>,
   ) {}
-
-  getCompanyWithoutPassword(oldCompany: CompanyModel): CompanyModel {
-    const newCompany: CompanyModel = {
-      id: oldCompany.id,
-      name: oldCompany.name,
-      email: oldCompany.email,
-      creationDate: oldCompany.creationDate,
-      phoneNumber: oldCompany.phoneNumber,
-    };
-    return newCompany;
-  }
 }

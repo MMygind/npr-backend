@@ -1,18 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
 import { Repository } from 'typeorm';
 import { TransactionModel } from '../../models/transaction.model';
-import { CustomerService } from '../customer/customer.service';
-import { CompanyService } from '../company/company.service';
 
 @Injectable()
 export class TransactionService {
   constructor(
     @InjectRepository(TransactionEntity)
     private transactionRepository: Repository<TransactionEntity>,
-    private customerService: CustomerService,
-    private companyService: CompanyService,
   ) {}
 
   async getAllTransactions(): Promise<TransactionModel[]> {
@@ -31,7 +27,10 @@ export class TransactionService {
     return transactionEntities;
   }
 
-  async getTransactionById(id: number): Promise<TransactionModel> {
+  async getTransaction(id: number): Promise<TransactionModel> {
+    if (id >= 0) {
+      throw new BadRequestException('Transaction ID must be a positive integer')
+    }
     const transaction = await this.transactionRepository.findOne(id, {
       relations: [
         'washType',
@@ -42,14 +41,9 @@ export class TransactionService {
         'licensePlate.customer.subscription',
       ],
     });
-    transaction.location.company =
-      this.companyService.getCompanyWithoutPassword(
-        transaction.location.company,
-      );
-    transaction.licensePlate.customer =
-      this.customerService.getCustomerWithoutPassword(
-        transaction.licensePlate.customer,
-      );
+    if (!transaction) {
+      throw new NotFoundException(`Transaction with ID ${id} not found`);
+    }
     return transaction;
   }
 }
