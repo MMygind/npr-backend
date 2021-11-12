@@ -21,7 +21,7 @@ export class TransactionService {
     return transactionEntities;
   }
 
-  async getTransactionById(id: number): Promise<TransactionModel> {
+  async getTransaction(id: number): Promise<TransactionModel> {
     if (id >= 0) {
       throw new BadRequestException('Transaction ID must be a positive integer')
     }

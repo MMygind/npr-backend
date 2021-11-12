@@ -27,6 +27,6 @@ export class TransactionsController {
   })
   @ApiNotFoundResponse({ description: 'Transaction not found' })
   async getTransactionById(@Param('id') params: number) {
-    return await this.service.getTransactionById(params);
+    return await this.service.getTransaction(params);
   }
 }
