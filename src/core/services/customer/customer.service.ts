@@ -12,29 +12,11 @@ export class CustomerService {
     private customerRepository: Repository<CustomerEntity>,
   ) {}
 
-  async getAllCustomers(
-  ): Promise<CustomerModel[]> {
+  async getAllCustomers(): Promise<CustomerModel[]> {
     const customers = await this.customerRepository.find({
       relations: ['subscription', 'licensePlates'],
     });
 
-    const newCustomers: CustomerModel[] = [];
-    customers.forEach((customer) => {
-      const newCustomer: CustomerModel = {
-        id: customer.id,
-        name: customer.name,
-        email: customer.email,
-        creationDate: customer.creationDate,
-        phoneNumber: customer.phoneNumber,
-        subscription: customer.subscription,
-        licensePlates: customer.licensePlates,
-        active: customer.active,
-      };
-      newCustomers.push(newCustomer);
-    });
-    const customerEntities: CustomerModel[] = JSON.parse(
-      JSON.stringify(newCustomers),
-    );
-    return customerEntities;
+    return customers;
   }
 }
