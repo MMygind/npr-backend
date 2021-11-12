@@ -27,11 +27,6 @@ export class TransactionsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Gets transaction with specified ID' })
-  @ApiParam({
-    name: 'id',
-    required: true,
-    description: 'Positive integer for transaction ID',
-  })
   @ApiOkResponse({ description: 'Transaction with specified ID returned' })
   @ApiBadRequestResponse({
     description: 'Failed to get transaction as request was malformed',
