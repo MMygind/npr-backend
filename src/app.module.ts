@@ -6,6 +6,8 @@ import { DatabaseModule } from './infrastructure/database.module';
 import { CustomerModule } from './api/customer.module';
 import { TransactionModule } from './api/transaction.module';
 import { AdministratorModule } from './api/administrator.module';
+import { LocationModule } from "./api/location.module";
+import { WashTypeModule } from "./api/washtype.module";
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { AdministratorModule } from './api/administrator.module';
     TransactionModule,
     CompanyModule,
     AdministratorModule,
+    LocationModule,
+    WashTypeModule,
   ],
   controllers: [],
   providers: [],

@@ -1,6 +1,6 @@
 import { CompanyModel } from './company.model';
 
-export interface WashtypeModel {
+export interface WashTypeModel {
   id?: number;
   name: string;
   price: number;

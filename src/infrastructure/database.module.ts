@@ -9,7 +9,7 @@ import { LicenseplateEntity } from './entities/licenseplate.entity';
 import { LocationEntity } from './entities/location.entity';
 import { SubscriptionEntity } from './entities/subscription.entity';
 import { TransactionEntity } from './entities/transaction.entity';
-import { WashtypeEntity } from './entities/washtype.entity';
+import { WashTypeEntity } from './entities/washtype.entity';
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { WashtypeEntity } from './entities/washtype.entity';
           LocationEntity,
           SubscriptionEntity,
           TransactionEntity,
-          WashtypeEntity,
+          WashTypeEntity,
         ],
         synchronize: true,
       }),

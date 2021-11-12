@@ -8,7 +8,7 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { Controller, Get, Param } from '@nestjs/common';
-import { NumberStringParam } from '../utilities/numberstringparam';
+import { NumberStringParam } from '../../utilities/numberstringparam';
 
 @Controller('transactions')
 export class TransactionsController {

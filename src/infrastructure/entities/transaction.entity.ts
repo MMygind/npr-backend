@@ -5,8 +5,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { WashtypeEntity } from './washtype.entity';
-import { WashtypeModel } from '../../core/models/washtype.model';
+import { WashTypeEntity } from './washtype.entity';
+import { WashTypeModel } from '../../core/models/washtype.model';
 import { LocationEntity } from './location.entity';
 import { LocationModel } from '../../core/models/location.model';
 import { LicenseplateEntity } from './licenseplate.entity';
@@ -17,9 +17,9 @@ export class TransactionEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @ManyToOne(() => WashtypeEntity)
+  @ManyToOne(() => WashTypeEntity)
   @JoinColumn()
-  public washType: WashtypeModel;
+  public washType: WashTypeModel;
 
   @ManyToOne(() => LocationEntity)
   @JoinColumn()

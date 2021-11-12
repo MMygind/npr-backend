@@ -9,7 +9,7 @@ import { CompanyEntity } from './company.entity';
 import { CompanyModel } from '../../core/models/company.model';
 
 @Entity({ name: 'WashType' })
-export class WashtypeEntity {
+export class WashTypeEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 

@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 import { CompanyEntity } from './company.entity';
 import { CompanyModel } from '../../core/models/company.model';
-import { WashtypeEntity } from './washtype.entity';
-import { WashtypeModel } from '../../core/models/washtype.model';
+import { WashTypeEntity } from './washtype.entity';
+import { WashTypeModel } from '../../core/models/washtype.model';
 
 @Entity({ name: 'Location' })
 export class LocationEntity {
@@ -39,7 +39,7 @@ export class LocationEntity {
   @Column({ nullable: true })
   public longitude?: number;
 
-  @ManyToMany(() => WashtypeEntity)
+  @ManyToMany(() => WashTypeEntity)
   @JoinTable({ name: 'LocationWashType' })
-  public washTypes: WashtypeModel[];
+  public washTypes: WashTypeModel[];
 }
