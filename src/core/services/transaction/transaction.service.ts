@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
 import { Repository } from 'typeorm';
@@ -21,14 +21,14 @@ export class TransactionService {
         'licensePlate.customer.subscription',
       ],
     });
-    const transactionEntities: TransactionModel[] = JSON.parse(
-      JSON.stringify(transactions),
-    );
-    return transactionEntities;
+    if (transactions.length == 0) {
+      throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
+    }
+    return transactions;
   }
 
   async getTransaction(id: number): Promise<TransactionModel> {
-    if (id >= 0) {
+    if (id <= 0) {
       throw new BadRequestException('Transaction ID must be a positive integer')
     }
     const transaction = await this.transactionRepository.findOne(id, {

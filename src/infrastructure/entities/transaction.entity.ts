@@ -30,6 +30,9 @@ export class TransactionEntity {
   public licensePlate: LicenseplateModel;
 
   @Column()
+  public purchasePrice: number;
+
+  @Column()
   public timestamp: Date;
 
   @Column()

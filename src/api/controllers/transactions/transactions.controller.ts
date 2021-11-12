@@ -1,12 +1,12 @@
 import { TransactionService } from '../../../core/services/transaction/transaction.service';
 import {
-  ApiBadRequestResponse,
+  ApiBadRequestResponse, ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiResponse,
-} from '@nestjs/swagger';
+  ApiResponse
+} from "@nestjs/swagger";
 import { Controller, Get, Param } from '@nestjs/common';
 
 @Controller('transactions')
@@ -19,7 +19,7 @@ export class TransactionsController {
     description: 'Gets all transactions from the database',
   })
   @ApiOkResponse({ description: 'All transactions returned' })
-  @ApiNotFoundResponse({ description: 'Could not find transactions' })
+  @ApiNoContentResponse({ description: 'Could not find transactions' })
   async getAllTransactions() {
     return await this.service.getAllTransactions();
   }
