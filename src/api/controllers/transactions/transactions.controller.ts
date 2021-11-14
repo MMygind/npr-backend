@@ -7,7 +7,16 @@ import {
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { TransactionModel } from '../../../core/models/transaction.model';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -22,6 +31,18 @@ export class TransactionsController {
   @ApiNotFoundResponse({ description: 'Could not find transactions' })
   async getAllTransactions() {
     return await this.service.getAllTransactions();
+  }
+
+  @Get('/paginated')
+  async getPaginatedTransactions(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(2), ParseIntPipe) limit = 2,
+  ): Promise<Pagination<TransactionModel>> {
+    return this.service.paginateTransactions({
+      page,
+      limit,
+      route: 'http://localhost:3000/transactions/paginated',
+    });
   }
 
   @Get(':id')
