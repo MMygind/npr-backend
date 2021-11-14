@@ -21,23 +21,25 @@ export class TransactionService {
   ) {}
 
   async getAllTransactions(offset?: number, limit?: number) {
-    const [items, count] = await this.transactionRepository.find({
-      relations: [
-        'washType',
-        'location',
-        'licensePlate',
-        'licensePlate.customer',
-        'licensePlate.customer.subscription',
-      ],
-      order: {
-        id: 'ASC',
+    const [transactions, count] = await this.transactionRepository.findAndCount(
+      {
+        relations: [
+          'washType',
+          'location',
+          'licensePlate',
+          'licensePlate.customer',
+          'licensePlate.customer.subscription',
+        ],
+        order: {
+          id: 'ASC',
+        },
+        skip: offset,
+        take: limit,
       },
-      skip: offset,
-      take: limit,
-    });
+    );
 
     return {
-      items,
+      transactions,
       count,
     };
   }
