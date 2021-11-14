@@ -39,7 +39,15 @@ export class TransactionService {
   async paginateTransactions(
     options: IPaginationOptions,
   ): Promise<Pagination<TransactionModel>> {
-    return paginate<TransactionModel>(this.transactionRepository, options);
+    return paginate<TransactionModel>(this.transactionRepository, options, {
+      relations: [
+        'washType',
+        'location',
+        'licensePlate',
+        'licensePlate.customer',
+        'licensePlate.customer.subscription',
+      ],
+    });
   }
 
   async getTransaction(id: number): Promise<TransactionModel> {
