@@ -20,8 +20,8 @@ export class TransactionService {
     private transactionRepository: Repository<TransactionEntity>,
   ) {}
 
-  async getAllTransactions(): Promise<TransactionModel[]> {
-    const transactions = await this.transactionRepository.find({
+  async getAllTransactions(offset?: number, limit?: number) {
+    const [items, count] = await this.transactionRepository.find({
       relations: [
         'washType',
         'location',
@@ -29,25 +29,17 @@ export class TransactionService {
         'licensePlate.customer',
         'licensePlate.customer.subscription',
       ],
+      order: {
+        id: 'ASC',
+      },
+      skip: offset,
+      take: limit,
     });
-    const transactionEntities: TransactionModel[] = JSON.parse(
-      JSON.stringify(transactions),
-    );
-    return transactionEntities;
-  }
 
-  async paginateTransactions(
-    options: IPaginationOptions,
-  ): Promise<Pagination<TransactionModel>> {
-    return paginate<TransactionModel>(this.transactionRepository, options, {
-      relations: [
-        'washType',
-        'location',
-        'licensePlate',
-        'licensePlate.customer',
-        'licensePlate.customer.subscription',
-      ],
-    });
+    return {
+      items,
+      count,
+    };
   }
 
   async getTransaction(id: number): Promise<TransactionModel> {
