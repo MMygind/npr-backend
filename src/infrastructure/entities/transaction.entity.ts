@@ -9,8 +9,8 @@ import { WashTypeEntity } from './washtype.entity';
 import { WashTypeModel } from '../../core/models/washtype.model';
 import { LocationEntity } from './location.entity';
 import { LocationModel } from '../../core/models/location.model';
-import { LicenseplateEntity } from './licenseplate.entity';
-import { LicenseplateModel } from '../../core/models/licenseplate.model';
+import { LicensePlateEntity } from './licenseplate.entity';
+import { LicensePlateModel } from '../../core/models/licenseplate.model';
 
 @Entity({ name: 'Transaction' })
 export class TransactionEntity {
@@ -25,9 +25,9 @@ export class TransactionEntity {
   @JoinColumn()
   public location: LocationModel;
 
-  @ManyToOne(() => LicenseplateEntity)
+  @ManyToOne(() => LicensePlateEntity)
   @JoinColumn()
-  public licensePlate: LicenseplateModel;
+  public licensePlate: LicensePlateModel;
 
   @Column()
   public purchasePrice: number;

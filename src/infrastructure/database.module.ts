@@ -5,7 +5,7 @@ import { AccountEntity } from './entities/account.entity';
 import { AdministratorEntity } from './entities/administrator.entity';
 import { CompanyEntity } from './entities/company.entity';
 import { CustomerEntity } from './entities/customer.entity';
-import { LicenseplateEntity } from './entities/licenseplate.entity';
+import { LicensePlateEntity } from './entities/licenseplate.entity';
 import { LocationEntity } from './entities/location.entity';
 import { SubscriptionEntity } from './entities/subscription.entity';
 import { TransactionEntity } from './entities/transaction.entity';
@@ -28,7 +28,7 @@ import { WashTypeEntity } from './entities/washtype.entity';
           AdministratorEntity,
           CompanyEntity,
           CustomerEntity,
-          LicenseplateEntity,
+          LicensePlateEntity,
           LocationEntity,
           SubscriptionEntity,
           TransactionEntity,

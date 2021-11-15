@@ -8,5 +8,6 @@ import { WashTypeService } from '../core/services/washtype/washtype.service';
   imports: [TypeOrmModule.forFeature([WashTypeEntity])],
   controllers: [WashTypesController],
   providers: [WashTypeService],
+  exports: [WashTypeService],
 })
 export class WashTypeModule {}

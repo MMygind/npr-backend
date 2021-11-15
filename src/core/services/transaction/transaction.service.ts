@@ -20,6 +20,8 @@ export class TransactionService {
         'licensePlate.customer',
         'licensePlate.customer.subscription',
       ],
+      // Show soft-deleted relations
+      withDeleted: true,
     });
     if (transactions.length == 0) {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
@@ -40,6 +42,8 @@ export class TransactionService {
         'licensePlate.customer',
         'licensePlate.customer.subscription',
       ],
+      // Show soft-deleted relations
+      withDeleted: true,
     });
     if (!transaction) {
       throw new NotFoundException(`Transaction with ID ${id} not found`);

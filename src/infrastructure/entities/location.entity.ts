@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -42,4 +43,7 @@ export class LocationEntity {
   @ManyToMany(() => WashTypeEntity)
   @JoinTable({ name: 'LocationWashType' })
   public washTypes: WashTypeModel[];
+
+  @DeleteDateColumn()
+  public deletedAt: Date;
 }
