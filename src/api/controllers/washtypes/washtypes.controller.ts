@@ -1,17 +1,26 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { WashTypeService } from '../../../core/services/washtype/washtype.service';
 import {
-  ApiBadRequestResponse, ApiCreatedResponse,
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiOperation
-} from "@nestjs/swagger";
-import { NumberStringParam } from "../../utilities/numberstringparam";
-import { CreateLocationDto } from "../../dtos/create-location.dto";
-import { UpdateLocationDto } from "../../dtos/update-location.dto";
-import { CreateWashTypeDto } from "../../dtos/create-washtype.dto";
-import { UpdateWashTypeDto } from "../../dtos/update-washtype.dto";
+  ApiOperation,
+} from '@nestjs/swagger';
+import { NumberStringParam } from '../../utilities/numberstringparam';
+import { CreateWashTypeDto } from '../../dtos/create-washtype.dto';
+import { UpdateWashTypeDto } from '../../dtos/update-washtype.dto';
 
 @Controller('washtypes')
 export class WashTypesController {
