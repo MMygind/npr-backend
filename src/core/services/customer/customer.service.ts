@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from '../../../infrastructure/entities/customer.entity';
 import { Repository } from 'typeorm';
 import { CustomerModel } from '../../models/customer.model';
-import { SubscriptionModel } from '../../models/subscription.model';
+import { UpdateCustomerDto } from '../../dtos/updateCustomer.dto';
 
 @Injectable()
 export class CustomerService {
@@ -13,10 +13,12 @@ export class CustomerService {
   ) {}
 
   async getAllCustomers(): Promise<CustomerModel[]> {
-    const customers = await this.customerRepository.find({
+    return await this.customerRepository.find({
       relations: ['subscription', 'licensePlates'],
     });
+  }
 
-    return customers;
+  async updateCustomer(customer: UpdateCustomerDto) {
+    return await this.customerRepository.save(customer);
   }
 }

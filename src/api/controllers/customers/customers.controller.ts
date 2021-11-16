@@ -1,7 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Put } from '@nestjs/common';
 import { CustomerService } from '../../../core/services/customer/customer.service';
-import { ApiBody, ApiHeader, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { SubscriptionModel } from '../../../core/models/subscription.model';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { UpdateCustomerDto } from '../../../core/dtos/updateCustomer.dto';
 
 @Controller('customers')
 export class CustomersController {
@@ -15,5 +15,20 @@ export class CustomersController {
   @ApiResponse({ status: 200, description: 'Success' })
   async getAllCustomers() {
     return await this.service.getAllCustomers();
+  }
+
+  @Put()
+  @ApiOperation({
+    summary: 'Updates a customer',
+    description: 'Updates a customer with the new information',
+  })
+  @ApiResponse({ status: 200, description: 'Customer was updated' })
+  @ApiResponse({ status: 404, description: 'Customer was not found' })
+  async updateCustomer(@Body() customer: UpdateCustomerDto) {
+    try {
+      return await this.service.updateCustomer(customer);
+    } catch {
+      throw new NotFoundException('Customer was not found');
+    }
   }
 }
