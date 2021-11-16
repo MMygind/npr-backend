@@ -1,4 +1,12 @@
-import { Body, Controller, Get, NotFoundException, Put } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { CustomerService } from '../../../core/services/customer/customer.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UpdateCustomerDto } from '../../../core/dtos/updateCustomer.dto';
@@ -13,8 +21,17 @@ export class CustomersController {
     description: 'Gets all customers from the database',
   })
   @ApiResponse({ status: 200, description: 'Success' })
-  async getAllCustomers() {
-    return await this.service.getAllCustomers();
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  async getAllFilteredCustomers(
+    @Query('status') status: boolean,
+    @Query('subscription') subscription: string,
+  ) {
+    try {
+      return await this.service.getAllFilteredCustomers(status, subscription);
+    }
+    catch {
+      throw new BadRequestException('Could not get list of customers');
+    }
   }
 
   @Put()

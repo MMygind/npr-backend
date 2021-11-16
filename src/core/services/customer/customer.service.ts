@@ -12,13 +12,55 @@ export class CustomerService {
     private customerRepository: Repository<CustomerEntity>,
   ) {}
 
-  async getAllCustomers(): Promise<CustomerModel[]> {
-    return await this.customerRepository.find({
-      relations: ['subscription', 'licensePlates'],
-    });
-  }
-
   async updateCustomer(customer: UpdateCustomerDto) {
     return await this.customerRepository.save(customer);
+  }
+
+  async getAllFilteredCustomers(
+    status: boolean,
+    subscription: string,
+  ): Promise<CustomerModel[]> {
+    let customerList;
+
+    if (status != null && subscription != null) {
+      const filteredList = this.customerRepository
+        .createQueryBuilder('customer')
+        .leftJoinAndSelect('customer.subscription', 'subscription')
+        .where('customer.active = :status', { status })
+        .andWhere('subscription.name = :subscription', {
+          subscription,
+        })
+        .execute();
+
+      customerList = filteredList;
+    }
+    else if (status != null && subscription == null) {
+      const filteredList = this.customerRepository
+        .createQueryBuilder('customer')
+        .where('customer.active = :status', { status })
+        .execute();
+
+      customerList = filteredList;
+    }
+    else if (subscription != null && status == null) {
+      const filteredList = this.customerRepository
+        .createQueryBuilder('customer')
+        .leftJoinAndSelect('customer.subscription', 'subscription')
+        .where('subscription.name = :subscription', {
+          subscription,
+        })
+        .execute();
+
+      customerList = filteredList;
+    }
+    else {
+      const list = this.customerRepository.find({
+        relations: ['subscription', 'licensePlates'],
+      });
+
+      customerList = list;
+    }
+
+    return customerList;
   }
 }
