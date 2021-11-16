@@ -31,6 +31,9 @@ export class TransactionService {
         'licensePlate.customer',
         'licensePlate.customer.subscription',
       ],
+      order: {
+        id: 'ASC',
+      },
     });
   }
 
