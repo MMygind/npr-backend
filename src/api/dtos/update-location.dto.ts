@@ -12,7 +12,7 @@ import {
   Min,
 } from 'class-validator';
 
-export class EditLocationDto {
+export class UpdateLocationDto {
   @IsInt()
   @IsNotEmpty()
   @ApiProperty()

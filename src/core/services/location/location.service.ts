@@ -12,7 +12,7 @@ import { LocationModel } from '../../models/location.model';
 import { CreateLocationDto } from '../../../api/dtos/create-location.dto';
 import { CompanyService } from '../company/company.service';
 import { WashTypeService } from '../washtype/washtype.service';
-import { EditLocationDto } from '../../../api/dtos/edit-location.dto';
+import { UpdateLocationDto } from '../../../api/dtos/update-location.dto';
 
 @Injectable()
 export class LocationService {
@@ -55,7 +55,7 @@ export class LocationService {
 
   async updateLocation(
     id: number,
-    dto: EditLocationDto,
+    dto: UpdateLocationDto,
   ): Promise<LocationModel> {
     if (id != dto.id) {
       throw new BadRequestException('Location ID does not match parameter ID');

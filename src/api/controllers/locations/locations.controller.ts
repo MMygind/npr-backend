@@ -21,7 +21,7 @@ import {
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { EditLocationDto } from '../../dtos/edit-location.dto';
+import { UpdateLocationDto } from '../../dtos/update-location.dto';
 
 @Controller('locations')
 export class LocationsController {
@@ -75,7 +75,7 @@ export class LocationsController {
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async updateLocation(
     @Param() params: NumberStringParam,
-    @Body() dto: EditLocationDto,
+    @Body() dto: UpdateLocationDto,
   ) {
     return await this.service.updateLocation(params.id, dto);
   }
