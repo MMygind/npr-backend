@@ -24,8 +24,9 @@ export class TransactionsController {
 
   @Get()
   @ApiOperation({
-    summary: 'Gets all transactions',
-    description: 'Gets all transactions from the database',
+    summary: 'Gets all transactions and pagination metadata',
+    description:
+      'Gets all transactions and pagination metadata from the database',
   })
   @ApiOkResponse({ description: 'All transactions returned' })
   @ApiNotFoundResponse({ description: 'Could not find transactions' })
