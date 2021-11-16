@@ -61,7 +61,7 @@ export class LocationService {
       throw new BadRequestException('Location ID does not match parameter ID');
     }
     await this.getLocation(dto.id); // will throw exception if it does not exist already, or id is negative
-    dto.company = await this.companyService.getCompany(dto.company.id);
+    dto.company = await this.companyService.getCompany(dto.company.id); // will throw exception if it does not exist already, or id is negative
     await Promise.all(
       dto.washTypes.map(async (washType) => {
         const foundWashType = await this.washTypeService.getWashType(

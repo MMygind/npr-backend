@@ -27,8 +27,6 @@ import { UpdateLocationDto } from '../../dtos/update-location.dto';
 export class LocationsController {
   constructor(private service: LocationService) {}
 
-  // add openapi stuff
-
   @Get()
   @ApiOperation({ summary: 'Get all locations' })
   @ApiOkResponse({ description: 'All locations returned' })
@@ -55,10 +53,10 @@ export class LocationsController {
     description: 'Failed to create location as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Associated company not found' })
-  // strips properties which do not have decorators in CreationLocationDto
+  // strips properties which do not have decorators
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  async createLocation(@Body() location: CreateLocationDto) {
-    return await this.service.createLocation(location);
+  async createLocation(@Body() dto: CreateLocationDto) {
+    return await this.service.createLocation(dto);
   }
 
   @Put(':id')
@@ -72,6 +70,7 @@ export class LocationsController {
   @ApiNotFoundResponse({
     description: 'One or more resources necessary for updating were missing',
   })
+  // strips properties which do not have decorators
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async updateLocation(
     @Param() params: NumberStringParam,

@@ -5,7 +5,6 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
 } from '@nestjs/swagger';
 import { Controller, Get, Param } from '@nestjs/common';
 import { NumberStringParam } from '../../utilities/numberstringparam';

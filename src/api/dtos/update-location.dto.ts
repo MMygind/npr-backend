@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
   Max,
   Min,
@@ -14,6 +15,7 @@ import {
 
 export class UpdateLocationDto {
   @IsInt()
+  @IsPositive()
   @IsNotEmpty()
   @ApiProperty()
   id: number;
