@@ -17,7 +17,6 @@ import {
 } from '@nestjs/common';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { TransactionModel } from '../../../core/models/transaction.model';
-import { PaginationParams } from '../../../utils/paginationsParams';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -30,8 +29,15 @@ export class TransactionsController {
   })
   @ApiOkResponse({ description: 'All transactions returned' })
   @ApiNotFoundResponse({ description: 'Could not find transactions' })
-  async getAllTransactions(@Query() { offset, limit }: PaginationParams) {
-    return await this.service.getAllTransactions(offset, limit);
+  async getAllTransactions(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ): Promise<Pagination<TransactionModel>> {
+    return await this.service.getAllTransactions({
+      page,
+      limit,
+      route: 'http://localhost:3000/transactions',
+    });
   }
 
   @Get(':id')

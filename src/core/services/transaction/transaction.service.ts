@@ -7,6 +7,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
 import { Repository } from 'typeorm';
 import { TransactionModel } from '../../models/transaction.model';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class TransactionService {
@@ -15,28 +20,18 @@ export class TransactionService {
     private transactionRepository: Repository<TransactionEntity>,
   ) {}
 
-  async getAllTransactions(offset?: number, limit?: number) {
-    const [transactions, count] = await this.transactionRepository.findAndCount(
-      {
-        relations: [
-          'washType',
-          'location',
-          'licensePlate',
-          'licensePlate.customer',
-          'licensePlate.customer.subscription',
-        ],
-        order: {
-          id: 'ASC',
-        },
-        skip: offset,
-        take: limit,
-      },
-    );
-
-    return {
-      transactions,
-      count,
-    };
+  async getAllTransactions(
+    options: IPaginationOptions,
+  ): Promise<Pagination<TransactionModel>> {
+    return paginate<TransactionModel>(this.transactionRepository, options, {
+      relations: [
+        'washType',
+        'location',
+        'licensePlate',
+        'licensePlate.customer',
+        'licensePlate.customer.subscription',
+      ],
+    });
   }
 
   async getTransaction(id: number): Promise<TransactionModel> {
