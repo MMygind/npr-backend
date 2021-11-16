@@ -1,8 +1,17 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
 import { Repository } from 'typeorm';
 import { TransactionModel } from '../../models/transaction.model';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class TransactionService {
@@ -11,8 +20,10 @@ export class TransactionService {
     private transactionRepository: Repository<TransactionEntity>,
   ) {}
 
-  async getAllTransactions(): Promise<TransactionModel[]> {
-    const transactions = await this.transactionRepository.find({
+  async getAllTransactions(
+    options: IPaginationOptions,
+  ): Promise<Pagination<TransactionModel>> {
+    return paginate<TransactionModel>(this.transactionRepository, options, {
       relations: [
         'washType',
         'location',
@@ -20,16 +31,17 @@ export class TransactionService {
         'licensePlate.customer',
         'licensePlate.customer.subscription',
       ],
+      order: {
+        id: 'ASC',
+      },
     });
-    const transactionEntities: TransactionModel[] = JSON.parse(
-      JSON.stringify(transactions),
-    );
-    return transactionEntities;
   }
 
   async getTransaction(id: number): Promise<TransactionModel> {
     if (id >= 0) {
-      throw new BadRequestException('Transaction ID must be a positive integer')
+      throw new BadRequestException(
+        'Transaction ID must be a positive integer',
+      );
     }
     const transaction = await this.transactionRepository.findOne(id, {
       relations: [
