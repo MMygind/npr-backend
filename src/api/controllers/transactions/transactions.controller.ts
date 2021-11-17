@@ -24,8 +24,9 @@ export class TransactionsController {
 
   @Get()
   @ApiOperation({
-    summary: 'Gets all transactions',
-    description: 'Gets all transactions from the database',
+    summary: 'Gets all transactions and pagination metadata',
+    description:
+      'Gets all transactions and pagination metadata from the database',
   })
   @ApiOkResponse({ description: 'All transactions returned' })
   @ApiNoContentResponse({ description: 'Could not find transactions' })
@@ -47,7 +48,7 @@ export class TransactionsController {
     description: 'Failed to get transaction as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Transaction not found' })
-  async getTransaction(@Param('id') params: number) {
-    return await this.service.getTransaction(params);
+  async getTransactionById(@Param() params: NumberStringParam) {
+    return await this.service.getTransaction(params.id);
   }
 }

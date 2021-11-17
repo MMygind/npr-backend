@@ -16,8 +16,10 @@ export class TransactionService {
     private transactionRepository: Repository<TransactionEntity>,
   ) {}
 
-  async getAllTransactions(): Promise<TransactionModel[]> {
-    const transactions = await this.transactionRepository.find({
+  async getAllTransactions(
+    options: IPaginationOptions,
+  ): Promise<Pagination<TransactionModel>> {
+    const transactions = await paginate<TransactionModel>(this.transactionRepository, options, {
       relations: [
         'washType',
         'location',
@@ -31,7 +33,7 @@ export class TransactionService {
       // Show soft-deleted relations
       withDeleted: true,
     });
-    if (transactions.length == 0) {
+    if (transactions.items.length == 0) {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
     }
     return transactions;
@@ -52,6 +54,8 @@ export class TransactionService {
         'licensePlate.customer',
         'licensePlate.customer.subscription',
       ],
+      // Show soft-deleted relations
+      withDeleted: true,
     });
     if (!transaction) {
       throw new NotFoundException(`Transaction with ID ${id} not found`);
