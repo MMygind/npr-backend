@@ -3,6 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
 import { Repository } from 'typeorm';
 import { TransactionModel } from '../../models/transaction.model';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class TransactionService {
@@ -20,6 +25,9 @@ export class TransactionService {
         'licensePlate.customer',
         'licensePlate.customer.subscription',
       ],
+      order: {
+        id: 'ASC',
+      },
       // Show soft-deleted relations
       withDeleted: true,
     });
@@ -30,8 +38,10 @@ export class TransactionService {
   }
 
   async getTransaction(id: number): Promise<TransactionModel> {
-    if (id <= 0) {
-      throw new BadRequestException('Transaction ID must be a positive integer')
+    if (id >= 0) {
+      throw new BadRequestException(
+        'Transaction ID must be a positive integer',
+      );
     }
     const transaction = await this.transactionRepository.findOne(id, {
       relations: [
@@ -42,8 +52,6 @@ export class TransactionService {
         'licensePlate.customer',
         'licensePlate.customer.subscription',
       ],
-      // Show soft-deleted relations
-      withDeleted: true,
     });
     if (!transaction) {
       throw new NotFoundException(`Transaction with ID ${id} not found`);
