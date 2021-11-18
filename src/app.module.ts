@@ -6,6 +6,7 @@ import { DatabaseModule } from './infrastructure/database.module';
 import { CustomerModule } from './api/customer.module';
 import { TransactionModule } from './api/transaction.module';
 import { AdministratorModule } from './api/administrator.module';
+import { AuthenticationModule } from './api/authentication.module';
 
 @Module({
   imports: [
@@ -17,6 +18,10 @@ import { AdministratorModule } from './api/administrator.module';
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
         PORT: Joi.number(),
+
+        // for authentication
+        JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRATION_TIME: Joi.string().required(),
       }),
     }),
     DatabaseModule,
@@ -24,6 +29,7 @@ import { AdministratorModule } from './api/administrator.module';
     TransactionModule,
     CompanyModule,
     AdministratorModule,
+    AuthenticationModule,
   ],
   controllers: [],
   providers: [],

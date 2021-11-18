@@ -12,12 +12,9 @@ export class CompanyEntity {
   public name: string;
 
   @Column()
-  public passwordHash: string;
+  public password: string;
 
-  @Column()
-  public passwordSalt: string;
-
-  @Column()
+  @Column('timestamp with time zone', { nullable: false, default: () => 'CURRENT_TIMESTAMP' })  
   public creationDate: Date;
 
   @Column()
