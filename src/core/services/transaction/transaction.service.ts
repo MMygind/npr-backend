@@ -59,7 +59,8 @@ export class TransactionService {
       .leftJoinAndSelect('transaction.location', 'location')
       .leftJoinAndSelect('transaction.washType', 'washType')
       .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
-      .leftJoinAndSelect('licensePlate.customer', 'customer');
+      .leftJoinAndSelect('licensePlate.customer', 'customer')
+      .leftJoinAndSelect('customer.subscription', 'subscription');
     queryBuilder
       .where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
         licensePlate: `%${queryValue}%`,
