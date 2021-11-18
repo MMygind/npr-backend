@@ -61,10 +61,10 @@ export class TransactionService {
       .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
       .leftJoinAndSelect('licensePlate.customer', 'customer');
     queryBuilder
-      .where('licensePlate.licensePlate LIKE :licensePlate', {
+      .where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
         licensePlate: `%${queryValue}%`,
       })
-      .orWhere('customer.name LIKE :name', { name: `%${queryValue}%` });
+      .orWhere('LOWER(customer.name) LIKE :name', { name: `%${queryValue}%` });
 
     return await paginate<TransactionModel>(queryBuilder, options);
   }
