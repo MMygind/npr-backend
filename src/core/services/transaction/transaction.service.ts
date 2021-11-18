@@ -52,8 +52,7 @@ export class TransactionService {
 
   async getFilteredTransactions(
     options: IPaginationOptions,
-    licensePlate: string,
-    name: string,
+    queryValue: string,
   ): Promise<Pagination<TransactionModel>> {
     const queryBuilder = this.transactionRepository
       .createQueryBuilder('transaction')
@@ -63,9 +62,9 @@ export class TransactionService {
       .leftJoinAndSelect('licensePlate.customer', 'customer');
     queryBuilder
       .where('licensePlate.licensePlate LIKE :licensePlate', {
-        licensePlate: `%${licensePlate}%`,
+        licensePlate: `%${queryValue}%`,
       })
-      .orWhere('customer.name LIKE :name', { name: `%${name}%` });
+      .orWhere('customer.name LIKE :name', { name: `%${queryValue}%` });
 
     return await paginate<TransactionModel>(queryBuilder, options);
   }

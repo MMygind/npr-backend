@@ -33,13 +33,9 @@ export class TransactionsController {
   async getAllTransactions(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
-    @Query('licensePlate') licensePlate: string,
-    @Query('name') name: string,
+    @Query('queryValue') queryValue: string,
   ): Promise<Pagination<TransactionModel>> {
-    if (
-      (licensePlate === null && name === null) ||
-      (licensePlate === undefined && name === undefined)
-    ) {
+    if (queryValue === null || queryValue === undefined) {
       return await this.service.getAllTransactions({
         page,
         limit,
@@ -52,8 +48,7 @@ export class TransactionsController {
           limit,
           route: 'http://localhost:3000/transactions',
         },
-        licensePlate,
-        name,
+        queryValue,
       );
     }
   }
