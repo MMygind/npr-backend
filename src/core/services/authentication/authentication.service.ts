@@ -38,11 +38,9 @@ export class AuthenticationService {
 
             await this.verifyPassword(plainTextPassword, company.password);
             company.password = undefined;
-            console.log("!!! ffs !!!");
-            console.log("company: " + JSON.stringify(company));
             return company;
         } catch (error) {
-            throw new HttpException('Wrong email provided', HttpStatus.BAD_REQUEST);
+            throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
         }
     }
 

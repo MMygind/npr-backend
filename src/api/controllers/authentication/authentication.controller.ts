@@ -20,11 +20,11 @@ export class AuthenticationController {
   @UseGuards(LocalAuthenticationGuard)
   @Post('log-in')
   async logIn(@Req() request: RequestWithCompany) {
-    const {company} = request;
+    const company = request.user;
     const cookie = this.authenticationService.getCookieWithJwtToken(company.id);
     request.res.setHeader('Set-Cookie', cookie);
     company.password = undefined;
-    return request.res.send(company);
+    return company;
   }
 
   @UseGuards(JwtAuthenticationGuard)
@@ -37,7 +37,7 @@ export class AuthenticationController {
   @UseGuards(JwtAuthenticationGuard)
   @Get()
   authenticate(@Req() request: RequestWithCompany) {
-    const company = request.company;
+    const company = request.user;
     company.password = undefined;
     return company;
   }
