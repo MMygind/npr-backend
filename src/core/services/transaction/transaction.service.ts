@@ -1,13 +1,20 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { TransactionModel } from '../../models/transaction.model';
 import {
   IPaginationOptions,
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { from, map, Observable } from 'rxjs';
 
 @Injectable()
 export class TransactionService {
@@ -19,24 +26,48 @@ export class TransactionService {
   async getAllTransactions(
     options: IPaginationOptions,
   ): Promise<Pagination<TransactionModel>> {
-    const transactions = await paginate<TransactionModel>(this.transactionRepository, options, {
-      relations: [
-        'washType',
-        'location',
-        'licensePlate',
-        'licensePlate.customer',
-        'licensePlate.customer.subscription',
-      ],
-      order: {
-        id: 'ASC',
+    const transactions = await paginate<TransactionModel>(
+      this.transactionRepository,
+      options,
+      {
+        relations: [
+          'washType',
+          'location',
+          'licensePlate',
+          'licensePlate.customer',
+          'licensePlate.customer.subscription',
+        ],
+        order: {
+          id: 'ASC',
+        },
+        // Show soft-deleted relations
+        withDeleted: true,
       },
-      // Show soft-deleted relations
-      withDeleted: true,
-    });
+    );
     if (transactions.items.length == 0) {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
     }
     return transactions;
+  }
+
+  async getFilteredTransactions(
+    options: IPaginationOptions,
+    queryValue: string,
+  ): Promise<Pagination<TransactionModel>> {
+    const queryBuilder = this.transactionRepository
+      .createQueryBuilder('transaction')
+      .leftJoinAndSelect('transaction.location', 'location')
+      .leftJoinAndSelect('transaction.washType', 'washType')
+      .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
+      .leftJoinAndSelect('licensePlate.customer', 'customer')
+      .leftJoinAndSelect('customer.subscription', 'subscription');
+    queryBuilder
+      .where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
+        licensePlate: `%${queryValue}%`,
+      })
+      .orWhere('LOWER(customer.name) LIKE :name', { name: `%${queryValue}%` });
+
+    return await paginate<TransactionModel>(queryBuilder, options);
   }
 
   async getTransaction(id: number): Promise<TransactionModel> {

@@ -33,12 +33,24 @@ export class TransactionsController {
   async getAllTransactions(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('queryValue') queryValue: string,
   ): Promise<Pagination<TransactionModel>> {
-    return await this.service.getAllTransactions({
-      page,
-      limit,
-      route: 'http://localhost:3000/transactions',
-    });
+    if (queryValue === null || queryValue === undefined) {
+      return await this.service.getAllTransactions({
+        page,
+        limit,
+        route: 'http://localhost:3000/transactions',
+      });
+    } else {
+      return this.service.getFilteredTransactions(
+        {
+          page,
+          limit,
+          route: 'http://localhost:3000/transactions',
+        },
+        queryValue,
+      );
+    }
   }
 
   @Get(':id')
