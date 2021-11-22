@@ -26,6 +26,7 @@ export class LocationService {
   async getAllLocations(): Promise<LocationModel[]> {
     const locations = await this.locationRepository.find({
       relations: ['company', 'washTypes'],
+      order: { name: 'ASC' },
     });
     if (locations.length == 0) {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
@@ -80,7 +81,7 @@ export class LocationService {
 
   // will NOT delete many-many relations with wash types
   // note that already soft-deleted entries can be soft-deleted again
-  async deleteLocation(id: number) {
+  async deleteLocation(id: number): Promise<boolean> {
     if (id <= 0) {
       throw new BadRequestException('Location ID must be a positive integer');
     }
@@ -88,5 +89,6 @@ export class LocationService {
     if (!deleteResponse.affected) {
       throw new NotFoundException(`Location with ID ${id} not found`);
     }
+    return true;
   }
 }

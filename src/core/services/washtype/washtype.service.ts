@@ -37,6 +37,7 @@ export class WashTypeService {
     }
     const washType = await this.washTypeRepository.findOne(id, {
       relations: ['company'],
+      order: { name: 'ASC' },
     });
     if (!washType) {
       throw new NotFoundException(`Wash type with ID ${id} not found`);
@@ -65,7 +66,7 @@ export class WashTypeService {
 
   // will NOT delete many-many relations with locations
   // note that already soft-deleted entries can be soft-deleted again
-  async deleteWashType(id: number) {
+  async deleteWashType(id: number): Promise<boolean> {
     if (id <= 0) {
       throw new BadRequestException('Wash type ID must be a positive integer');
     }
@@ -73,5 +74,6 @@ export class WashTypeService {
     if (!deleteResponse.affected) {
       throw new NotFoundException(`Wash type with ID ${id} not found`);
     }
+    return true;
   }
 }
