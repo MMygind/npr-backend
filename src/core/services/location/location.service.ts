@@ -31,6 +31,13 @@ export class LocationService {
     if (locations.length == 0) {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
     }
+    // maybe replace with querybuilder
+    locations.forEach(
+      (location) =>
+        (location.washTypes = location.washTypes.sort((a, b) =>
+          a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1,
+        )),
+    );
     return locations;
   }
 
@@ -44,6 +51,10 @@ export class LocationService {
     if (!location) {
       throw new NotFoundException(`Location with ID ${id} not found`);
     }
+    // maybe replace with querybuilder
+    location.washTypes = location.washTypes.sort((a, b) =>
+      a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1,
+    );
     return location;
   }
 
