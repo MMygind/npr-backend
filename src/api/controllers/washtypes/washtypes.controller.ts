@@ -86,6 +86,6 @@ export class WashTypesController {
   })
   @ApiNotFoundResponse({ description: 'Wash type not found' })
   async deleteWashType(@Param() params: NumberStringParam) {
-    await this.service.deleteWashType(params.id);
+    return await this.service.deleteWashType(params.id);
   }
 }

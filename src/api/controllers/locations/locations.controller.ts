@@ -87,6 +87,6 @@ export class LocationsController {
   })
   @ApiNotFoundResponse({ description: 'Location not found' })
   async deleteLocation(@Param() params: NumberStringParam) {
-    await this.service.deleteLocation(params.id);
+    return await this.service.deleteLocation(params.id);
   }
 }
