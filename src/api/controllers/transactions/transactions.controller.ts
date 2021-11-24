@@ -34,8 +34,13 @@ export class TransactionsController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @Query('queryValue') queryValue: string,
+    @Query('startDate') startDate: Date,
+    @Query('endDate') endDate: Date,
   ): Promise<Pagination<TransactionModel>> {
-    if (queryValue === null || queryValue === undefined) {
+    if (
+      (queryValue === null && startDate === null) ||
+      (queryValue === undefined && startDate === undefined)
+    ) {
       return await this.service.getAllTransactions({
         page,
         limit,
@@ -49,6 +54,8 @@ export class TransactionsController {
           route: 'http://localhost:3000/transactions',
         },
         queryValue,
+        startDate,
+        endDate,
       );
     }
   }

@@ -53,6 +53,8 @@ export class TransactionService {
   async getFilteredTransactions(
     options: IPaginationOptions,
     queryValue: string,
+    startDate: Date,
+    endDate: Date,
   ): Promise<Pagination<TransactionModel>> {
     const queryBuilder = this.transactionRepository
       .createQueryBuilder('transaction')
@@ -61,11 +63,49 @@ export class TransactionService {
       .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
       .leftJoinAndSelect('licensePlate.customer', 'customer')
       .leftJoinAndSelect('customer.subscription', 'subscription');
-    queryBuilder
-      .where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
-        licensePlate: `%${queryValue}%`,
-      })
-      .orWhere('LOWER(customer.name) LIKE :name', { name: `%${queryValue}%` });
+
+    if (queryValue !== null && startDate == null && endDate == null) {
+      queryBuilder
+        .where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
+          licensePlate: `%${queryValue}%`,
+        })
+        .orWhere('LOWER(customer.name) LIKE :name', {
+          name: `%${queryValue}%`,
+        });
+      console.log(queryValue);
+    } else if (queryValue == null && startDate !== null && endDate !== null) {
+      queryBuilder.where(
+        'transaction.timestamp > :startDate AND transaction.timestamp < :endDate',
+        {
+          startDate: startDate,
+          endDate: endDate,
+        },
+      );
+      console.log(startDate);
+      console.log(endDate);
+    } else if (queryValue !== null && startDate !== null && endDate !== null) {
+      queryBuilder
+        .where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
+          licensePlate: `%${queryValue}%`,
+        })
+        .andWhere(
+          'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
+          {
+            startDate: startDate,
+            endDate: endDate,
+          },
+        )
+        .orWhere('LOWER(customer.name) LIKE :name', {
+          name: `%${queryValue}%`,
+        })
+        .andWhere(
+          'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
+          {
+            startDate: startDate,
+            endDate: endDate,
+          },
+        );
+    }
 
     return await paginate<TransactionModel>(queryBuilder, options);
   }
