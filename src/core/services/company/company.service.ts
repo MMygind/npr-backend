@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus,Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import { CompanyEntity } from '../../../infrastructure/entities/company.entity';
 import { Repository } from 'typeorm';
 import { CompanyModel } from '../../models/company.model';
@@ -43,5 +44,32 @@ export class CompanyService {
       return company;
     }
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  // use a user service later?
+  async setCurrentRefreshToken(refreshToken: string, userId: number) {
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await this.companyRepository.update(userId, {
+      currentHashedRefreshToken
+    });
+  }
+
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
+    const user = await this.getById(userId);
+ 
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.currentHashedRefreshToken
+    );
+ 
+    if (isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async removeRefreshToken(userId: number) {
+    return this.companyRepository.update(userId, {
+      currentHashedRefreshToken: null
+    });
   }
 }
