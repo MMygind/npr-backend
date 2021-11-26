@@ -71,8 +71,16 @@ export class TransactionService {
         })
         .orWhere('LOWER(customer.name) LIKE :name', {
           name: `%${queryValue}%`,
+        })
+        .orWhere('LOWER(washType.name) LIKE :washType', {
+          washType: `%${queryValue}%`,
+        })
+        .orWhere('LOWER(location.name) LIKE :location', {
+          location: `%${queryValue}%`,
+        })
+        .orWhere('LOWER(subscription.name) LIKE :subscription', {
+          subscription: `%${queryValue}%`,
         });
-      console.log(queryValue);
     } else if (queryValue == null && startDate !== null && endDate !== null) {
       queryBuilder.where(
         'transaction.timestamp > :startDate AND transaction.timestamp < :endDate',
@@ -97,6 +105,36 @@ export class TransactionService {
         )
         .orWhere('LOWER(customer.name) LIKE :name', {
           name: `%${queryValue}%`,
+        })
+        .andWhere(
+          'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
+          {
+            startDate: startDate,
+            endDate: endDate,
+          },
+        )
+        .orWhere('LOWER(washType.name) LIKE :washType', {
+          washType: `%${queryValue}%`,
+        })
+        .andWhere(
+          'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
+          {
+            startDate: startDate,
+            endDate: endDate,
+          },
+        )
+        .orWhere('LOWER(location.name) LIKE :location', {
+          location: `%${queryValue}%`,
+        })
+        .andWhere(
+          'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
+          {
+            startDate: startDate,
+            endDate: endDate,
+          },
+        )
+        .orWhere('LOWER(subscription.name) LIKE :subscription', {
+          subscription: `%${queryValue}%`,
         })
         .andWhere(
           'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
