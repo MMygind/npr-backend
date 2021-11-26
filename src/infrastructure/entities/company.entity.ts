@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import Role from '../../core/authentication/role.enum';
 
 @Entity({ name: 'Company' })
 export class CompanyEntity {
@@ -23,4 +24,11 @@ export class CompanyEntity {
 
   @Column()
   public phoneNumber: string;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.User
+  })
+  public role: Role
 }
