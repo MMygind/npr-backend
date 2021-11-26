@@ -23,11 +23,11 @@ export class CustomersController {
   @ApiResponse({ status: 200, description: 'Success' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   async getAllFilteredCustomers(
-    @Query('status') status: boolean,
+    @Query('active') active: boolean,
     @Query('subscription') subscription: string,
   ) {
     try {
-      return await this.service.getAllFilteredCustomers(status, subscription);
+      return await this.service.getAllFilteredCustomers(active, subscription);
     }
     catch {
       throw new BadRequestException('Could not get list of customers');

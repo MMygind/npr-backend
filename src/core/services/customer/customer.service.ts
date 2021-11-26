@@ -17,50 +17,30 @@ export class CustomerService {
   }
 
   async getAllFilteredCustomers(
-    status: boolean,
+    active: boolean,
     subscription: string,
   ): Promise<CustomerModel[]> {
-    let customerList;
+    const query = this.customerRepository
+      .createQueryBuilder('customer')
+      .leftJoinAndSelect('customer.subscription', 'subscription')
+      .leftJoinAndSelect('customer.licensePlates', 'licensePlates');
 
-    if (status != null && subscription != null) {
-      const filteredList = this.customerRepository
-        .createQueryBuilder('customer')
-        .leftJoinAndSelect('customer.subscription', 'subscription')
-        .where('customer.active = :status', { status })
+    if (active != null && subscription != null) {
+      query
+        .where('customer.active = :active', { active })
         .andWhere('subscription.name = :subscription', {
           subscription,
-        })
-        .execute();
-
-      customerList = filteredList;
+        });
     }
-    else if (status != null && subscription == null) {
-      const filteredList = this.customerRepository
-        .createQueryBuilder('customer')
-        .where('customer.active = :status', { status })
-        .execute();
-
-      customerList = filteredList;
+    else if (active != null && subscription == null) {
+      query.where('customer.active = :active', { active });
     }
-    else if (subscription != null && status == null) {
-      const filteredList = this.customerRepository
-        .createQueryBuilder('customer')
-        .leftJoinAndSelect('customer.subscription', 'subscription')
-        .where('subscription.name = :subscription', {
-          subscription,
-        })
-        .execute();
-
-      customerList = filteredList;
-    }
-    else {
-      const list = this.customerRepository.find({
-        relations: ['subscription', 'licensePlates'],
+    else if (subscription != null && active == null) {
+      query.where('subscription.name = :subscription', {
+        subscription,
       });
-
-      customerList = list;
     }
 
-    return customerList;
+    return await query.getMany();
   }
 }
