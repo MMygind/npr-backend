@@ -1,5 +1,5 @@
 import { SubscriptionModel } from '../models/subscription.model';
-import { LicenseplateModel } from '../models/licenseplate.model';
+import { LicensePlateModel } from '../models/licenseplate.model';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateCustomerDto {
@@ -16,7 +16,7 @@ export class UpdateCustomerDto {
   @ApiProperty()
   subscription: SubscriptionModel;
   @ApiProperty()
-  licensePlates: LicenseplateModel[];
+  licensePlates: LicensePlateModel[];
   @ApiProperty()
   active: boolean;
 }

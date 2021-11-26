@@ -8,8 +8,9 @@ import {
 } from 'typeorm';
 import { SubscriptionEntity } from './subscription.entity';
 import { SubscriptionModel } from '../../core/models/subscription.model';
-import { LicenseplateEntity } from './licenseplate.entity';
-import { LicenseplateModel } from '../../core/models/licenseplate.model';
+import { LicensePlateEntity } from './licenseplate.entity';
+import { LicensePlateModel } from '../../core/models/licenseplate.model';
+import { Exclude } from 'class-transformer';
 
 @Entity({ name: 'Customer' })
 export class CustomerEntity {
@@ -23,9 +24,11 @@ export class CustomerEntity {
   public email: string;
 
   @Column()
+  @Exclude()
   public passwordHash: string;
 
   @Column()
+  @Exclude()
   public passwordSalt: string;
 
   @Column()
@@ -38,8 +41,8 @@ export class CustomerEntity {
   @JoinColumn()
   public subscription: SubscriptionModel;
 
-  @OneToMany(() => LicenseplateEntity, (lp: LicenseplateEntity) => lp.customer)
-  public licensePlates: LicenseplateModel[];
+  @OneToMany(() => LicensePlateEntity, (lp: LicensePlateEntity) => lp.customer)
+  public licensePlates: LicensePlateModel[];
 
   @Column()
   public active: boolean;
