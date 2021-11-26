@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
-import { Like, Repository } from 'typeorm';
+import { Brackets, Like, Repository } from 'typeorm';
 import { TransactionModel } from '../../models/transaction.model';
 import {
   IPaginationOptions,
@@ -55,6 +55,9 @@ export class TransactionService {
     queryValue: string,
     startDate: Date,
     endDate: Date,
+    washType: string,
+    location: string,
+    customerType: string,
   ): Promise<Pagination<TransactionModel>> {
     const queryBuilder = this.transactionRepository
       .createQueryBuilder('transaction')
@@ -64,85 +67,42 @@ export class TransactionService {
       .leftJoinAndSelect('licensePlate.customer', 'customer')
       .leftJoinAndSelect('customer.subscription', 'subscription');
 
-    if (queryValue !== null && startDate == null && endDate == null) {
-      queryBuilder
-        .where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
-          licensePlate: `%${queryValue}%`,
-        })
-        .orWhere('LOWER(customer.name) LIKE :name', {
-          name: `%${queryValue}%`,
-        })
-        .orWhere('LOWER(washType.name) LIKE :washType', {
-          washType: `%${queryValue}%`,
-        })
-        .orWhere('LOWER(location.name) LIKE :location', {
-          location: `%${queryValue}%`,
-        })
-        .orWhere('LOWER(subscription.name) LIKE :subscription', {
-          subscription: `%${queryValue}%`,
-        });
-    } else if (queryValue == null && startDate !== null && endDate !== null) {
+    if (queryValue) {
       queryBuilder.where(
-        'transaction.timestamp > :startDate AND transaction.timestamp < :endDate',
+        new Brackets((qb) => {
+          qb.where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
+            licensePlate: `%${queryValue}%`,
+          }).orWhere('LOWER(customer.name) LIKE :name', {
+            name: `%${queryValue}%`,
+          });
+        }),
+      );
+    }
+    if (startDate && endDate) {
+      queryBuilder.andWhere(
+        'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
         {
           startDate: startDate,
           endDate: endDate,
         },
       );
-      console.log(startDate);
-      console.log(endDate);
-    } else if (queryValue !== null && startDate !== null && endDate !== null) {
-      queryBuilder
-        .where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
-          licensePlate: `%${queryValue}%`,
-        })
-        .andWhere(
-          'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
-          {
-            startDate: startDate,
-            endDate: endDate,
-          },
-        )
-        .orWhere('LOWER(customer.name) LIKE :name', {
-          name: `%${queryValue}%`,
-        })
-        .andWhere(
-          'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
-          {
-            startDate: startDate,
-            endDate: endDate,
-          },
-        )
-        .orWhere('LOWER(washType.name) LIKE :washType', {
-          washType: `%${queryValue}%`,
-        })
-        .andWhere(
-          'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
-          {
-            startDate: startDate,
-            endDate: endDate,
-          },
-        )
-        .orWhere('LOWER(location.name) LIKE :location', {
-          location: `%${queryValue}%`,
-        })
-        .andWhere(
-          'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
-          {
-            startDate: startDate,
-            endDate: endDate,
-          },
-        )
-        .orWhere('LOWER(subscription.name) LIKE :subscription', {
-          subscription: `%${queryValue}%`,
-        })
-        .andWhere(
-          'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
-          {
-            startDate: startDate,
-            endDate: endDate,
-          },
-        );
+    }
+    if (washType) {
+      queryBuilder.andWhere('washType.name = :washType', {
+        washType: washType,
+      });
+    }
+
+    if (location) {
+      queryBuilder.andWhere('location.name = :location', {
+        location: location,
+      });
+    }
+
+    if (customerType) {
+      queryBuilder.andWhere('subscription.name = :customerType', {
+        customerType: customerType,
+      });
     }
 
     return await paginate<TransactionModel>(queryBuilder, options);

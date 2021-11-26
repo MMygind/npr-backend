@@ -36,6 +36,9 @@ export class TransactionsController {
     @Query('queryValue') queryValue: string,
     @Query('startDate') startDate: Date,
     @Query('endDate') endDate: Date,
+    @Query('washType') washType: string,
+    @Query('location') location: string,
+    @Query('customerType') customerType: string,
   ): Promise<Pagination<TransactionModel>> {
     if (
       (queryValue === null && startDate === null) ||
@@ -56,6 +59,9 @@ export class TransactionsController {
         queryValue,
         startDate,
         endDate,
+        washType,
+        location,
+        customerType,
       );
     }
   }
