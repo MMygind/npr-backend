@@ -88,20 +88,20 @@ export class TransactionService {
       );
     }
     if (washType) {
-      queryBuilder.andWhere('washType.name = :washType', {
-        washType: washType,
+      queryBuilder.andWhere('LOWER(washType.name) LIKE :washType', {
+        washType: `%${washType}%`,
       });
     }
 
     if (location) {
-      queryBuilder.andWhere('location.name = :location', {
-        location: location,
+      queryBuilder.andWhere('LOWER(location.name) LIKE :location', {
+        location: `%${location}%`,
       });
     }
 
     if (customerType) {
-      queryBuilder.andWhere('subscription.name = :customerType', {
-        customerType: customerType,
+      queryBuilder.andWhere('LOWER(subscription.name) LIKE :customerType', {
+        customerType: `%${customerType}%`,
       });
     }
 
