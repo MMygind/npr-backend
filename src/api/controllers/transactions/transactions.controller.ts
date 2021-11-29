@@ -41,8 +41,16 @@ export class TransactionsController {
     @Query('customerType') customerType: string,
   ): Promise<Pagination<TransactionModel>> {
     if (
-      (queryValue === null && startDate === null) ||
-      (queryValue === undefined && startDate === undefined)
+      (queryValue === null &&
+        startDate === null &&
+        washType === null &&
+        location === null &&
+        customerType === null) ||
+      (queryValue === undefined &&
+        startDate === undefined &&
+        washType === undefined &&
+        location === undefined &&
+        customerType === undefined)
     ) {
       return await this.service.getAllTransactions({
         page,
