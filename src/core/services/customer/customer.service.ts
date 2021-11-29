@@ -12,13 +12,35 @@ export class CustomerService {
     private customerRepository: Repository<CustomerEntity>,
   ) {}
 
-  async getAllCustomers(): Promise<CustomerModel[]> {
-    return await this.customerRepository.find({
-      relations: ['subscription', 'licensePlates'],
-    });
-  }
-
   async updateCustomer(customer: UpdateCustomerDto) {
     return await this.customerRepository.save(customer);
+  }
+
+  async getAllFilteredCustomers(
+    active: boolean,
+    subscription: string,
+  ): Promise<CustomerModel[]> {
+    const query = this.customerRepository
+      .createQueryBuilder('customer')
+      .leftJoinAndSelect('customer.subscription', 'subscription')
+      .leftJoinAndSelect('customer.licensePlates', 'licensePlates');
+
+    if (active != null && subscription != null) {
+      query
+        .where('customer.active = :active', { active })
+        .andWhere('subscription.name = :subscription', {
+          subscription,
+        });
+    }
+    else if (active != null && subscription == null) {
+      query.where('customer.active = :active', { active });
+    }
+    else if (subscription != null && active == null) {
+      query.where('subscription.name = :subscription', {
+        subscription,
+      });
+    }
+
+    return await query.getMany();
   }
 }
