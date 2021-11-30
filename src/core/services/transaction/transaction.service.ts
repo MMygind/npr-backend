@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
-import { Like, Repository } from 'typeorm';
+import { Brackets, Like, Repository } from 'typeorm';
 import { TransactionModel } from '../../models/transaction.model';
 import {
   IPaginationOptions,
@@ -53,6 +53,11 @@ export class TransactionService {
   async getFilteredTransactions(
     options: IPaginationOptions,
     queryValue: string,
+    startDate: Date,
+    endDate: Date,
+    washType: string,
+    location: string,
+    customerType: string,
   ): Promise<Pagination<TransactionModel>> {
     const queryBuilder = this.transactionRepository
       .createQueryBuilder('transaction')
@@ -61,11 +66,44 @@ export class TransactionService {
       .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
       .leftJoinAndSelect('licensePlate.customer', 'customer')
       .leftJoinAndSelect('customer.subscription', 'subscription');
-    queryBuilder
-      .where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
-        licensePlate: `%${queryValue}%`,
-      })
-      .orWhere('LOWER(customer.name) LIKE :name', { name: `%${queryValue}%` });
+
+    if (queryValue) {
+      queryBuilder.where(
+        new Brackets((qb) => {
+          qb.where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
+            licensePlate: `%${queryValue}%`,
+          }).orWhere('LOWER(customer.name) LIKE :name', {
+            name: `%${queryValue}%`,
+          });
+        }),
+      );
+    }
+    if (startDate && endDate) {
+      queryBuilder.andWhere(
+        'transaction.timestamp >= :startDate AND transaction.timestamp <= :endDate',
+        {
+          startDate: startDate,
+          endDate: endDate,
+        },
+      );
+    }
+    if (washType) {
+      queryBuilder.andWhere('LOWER(washType.name) LIKE :washType', {
+        washType: `%${washType}%`,
+      });
+    }
+
+    if (location) {
+      queryBuilder.andWhere('LOWER(location.name) LIKE :location', {
+        location: `%${location}%`,
+      });
+    }
+
+    if (customerType) {
+      queryBuilder.andWhere('LOWER(subscription.name) LIKE :customerType', {
+        customerType: `%${customerType}%`,
+      });
+    }
 
     return await paginate<TransactionModel>(queryBuilder, options);
   }
