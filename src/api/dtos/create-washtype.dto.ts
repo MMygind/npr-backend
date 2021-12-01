@@ -1,6 +1,6 @@
-import { CompanyModel } from '../../core/models/company.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
+import { LocationModel } from '../../core/models/location.model';
 
 export class CreateWashTypeDto {
   @IsString()
@@ -15,5 +15,5 @@ export class CreateWashTypeDto {
 
   @IsNotEmpty()
   @ApiProperty({ description: 'Must have positive integer property "id"' })
-  company: CompanyModel;
+  location: LocationModel;
 }

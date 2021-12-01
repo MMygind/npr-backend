@@ -11,6 +11,8 @@ import { SubscriptionModel } from '../../core/models/subscription.model';
 import { LicensePlateEntity } from './licenseplate.entity';
 import { LicensePlateModel } from '../../core/models/licenseplate.model';
 import { Exclude } from 'class-transformer';
+import { CompanyEntity } from './company.entity';
+import { CompanyModel } from '../../core/models/company.model';
 
 @Entity({ name: 'Customer' })
 export class CustomerEntity {
@@ -43,6 +45,10 @@ export class CustomerEntity {
 
   @OneToMany(() => LicensePlateEntity, (lp: LicensePlateEntity) => lp.customer)
   public licensePlates: LicensePlateModel[];
+
+  @ManyToOne(() => CompanyEntity, (company: CompanyEntity) => company.customers)
+  @JoinColumn()
+  public company: CompanyModel;
 
   @Column()
   public active: boolean;

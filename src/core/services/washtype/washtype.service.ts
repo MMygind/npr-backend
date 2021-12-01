@@ -10,21 +10,19 @@ import { WashTypeEntity } from '../../../infrastructure/entities/washtype.entity
 import { Repository } from 'typeorm';
 import { WashTypeModel } from '../../models/washtype.model';
 import { CreateWashTypeDto } from '../../../api/dtos/create-washtype.dto';
-import { CompanyService } from '../company/company.service';
 import { UpdateWashTypeDto } from '../../../api/dtos/update-washtype.dto';
+import { LocationService } from '../location/location.service';
 
 @Injectable()
 export class WashTypeService {
   constructor(
     @InjectRepository(WashTypeEntity)
     private washTypeRepository: Repository<WashTypeEntity>,
-    private companyService: CompanyService,
+    private locationService: LocationService,
   ) {}
 
   async getAllWashTypes(): Promise<WashTypeModel[]> {
-    const washTypes = await this.washTypeRepository.find({
-      relations: ['company'],
-    });
+    const washTypes = await this.washTypeRepository.find();
     if (washTypes.length == 0) {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
     }
@@ -35,10 +33,7 @@ export class WashTypeService {
     if (id <= 0) {
       throw new BadRequestException('Wash type ID must be a positive integer');
     }
-    const washType = await this.washTypeRepository.findOne(id, {
-      relations: ['company'],
-      order: { name: 'ASC' },
-    });
+    const washType = await this.washTypeRepository.findOne(id);
     if (!washType) {
       throw new NotFoundException(`Wash type with ID ${id} not found`);
     }
@@ -46,7 +41,7 @@ export class WashTypeService {
   }
 
   async createWashType(dto: CreateWashTypeDto): Promise<WashTypeModel> {
-    dto.company = await this.companyService.getCompany(dto.company.id);
+    dto.location = await this.locationService.getLocation(dto.location.id);
     const newWashType = this.washTypeRepository.create(dto);
     await this.washTypeRepository.save(newWashType);
     return await this.getWashType(newWashType.id);
@@ -64,7 +59,6 @@ export class WashTypeService {
     return await this.getWashType(id);
   }
 
-  // will NOT delete many-many relations with locations
   // note that already soft-deleted entries can be soft-deleted again
   async deleteWashType(id: number): Promise<boolean> {
     if (id <= 0) {

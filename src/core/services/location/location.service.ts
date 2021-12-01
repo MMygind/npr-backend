@@ -11,7 +11,6 @@ import { Repository } from 'typeorm';
 import { LocationModel } from '../../models/location.model';
 import { CreateLocationDto } from '../../../api/dtos/create-location.dto';
 import { CompanyService } from '../company/company.service';
-import { WashTypeService } from '../washtype/washtype.service';
 import { UpdateLocationDto } from '../../../api/dtos/update-location.dto';
 
 @Injectable()
@@ -20,7 +19,6 @@ export class LocationService {
     @InjectRepository(LocationEntity)
     private locationRepository: Repository<LocationEntity>,
     private companyService: CompanyService,
-    private washTypeService: WashTypeService,
   ) {}
 
   async getAllLocations(): Promise<LocationModel[]> {
@@ -73,24 +71,10 @@ export class LocationService {
       throw new BadRequestException('Location ID does not match parameter ID');
     }
     await this.getLocation(dto.id); // will throw exception if it does not exist already, or id is negative
-    dto.company = await this.companyService.getCompany(dto.company.id); // will throw exception if it does not exist already, or id is negative
-    await Promise.all(
-      dto.washTypes.map(async (washType) => {
-        const foundWashType = await this.washTypeService.getWashType(
-          washType.id,
-        );
-        if (foundWashType.company.id != dto.company.id) {
-          throw new BadRequestException(
-            'Can only include valid company wash types',
-          );
-        }
-      }),
-    );
     await this.locationRepository.save(dto);
     return await this.getLocation(id);
   }
 
-  // will NOT delete many-many relations with wash types
   // note that already soft-deleted entries can be soft-deleted again
   async deleteLocation(id: number): Promise<boolean> {
     if (id <= 0) {
