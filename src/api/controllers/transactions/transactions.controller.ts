@@ -1,19 +1,87 @@
 import { TransactionService } from '../../../core/services/transaction/transaction.service';
-import { ApiResponse } from '@nestjs/swagger';
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
+import { NumberStringParam } from '../../utilities/numberstringparam';
+import {
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
+import { Pagination } from 'nestjs-typeorm-paginate';
+import { TransactionModel } from '../../../core/models/transaction.model';
 
 @Controller('transactions')
 export class TransactionsController {
   constructor(private service: TransactionService) {}
 
   @Get()
-  @ApiResponse({ status: 200, description: 'Gets all transactions' })
-  async getAllTransactions() {
-    return await this.service.getAllTransactions();
+  @ApiOperation({
+    summary: 'Gets all transactions and pagination metadata',
+    description:
+      'Gets all transactions and pagination metadata from the database',
+  })
+  @ApiOkResponse({ description: 'All transactions returned' })
+  @ApiNoContentResponse({ description: 'Could not find transactions' })
+  async getAllTransactions(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('queryValue') queryValue: string,
+    @Query('startDate') startDate: Date,
+    @Query('endDate') endDate: Date,
+    @Query('washType') washType: string,
+    @Query('location') location: string,
+    @Query('customerType') customerType: string,
+  ): Promise<Pagination<TransactionModel>> {
+    if (
+      (queryValue === null &&
+        startDate === null &&
+        washType === null &&
+        location === null &&
+        customerType === null) ||
+      (queryValue === undefined &&
+        startDate === undefined &&
+        washType === undefined &&
+        location === undefined &&
+        customerType === undefined)
+    ) {
+      return await this.service.getAllTransactions({
+        page,
+        limit,
+        route: 'http://localhost:3000/transactions',
+      });
+    } else {
+      return this.service.getFilteredTransactions(
+        {
+          page,
+          limit,
+          route: 'http://localhost:3000/transactions',
+        },
+        queryValue,
+        startDate,
+        endDate,
+        washType,
+        location,
+        customerType,
+      );
+    }
   }
 
   @Get(':id')
-  async getTransactionById(@Param() params) {
-    return await this.service.getTransactionById(params.id);
+  @ApiOperation({ summary: 'Gets transaction with specified ID' })
+  @ApiOkResponse({ description: 'Transaction with specified ID returned' })
+  @ApiBadRequestResponse({
+    description: 'Failed to get transaction as request was malformed',
+  })
+  @ApiNotFoundResponse({ description: 'Transaction not found' })
+  async getTransactionById(@Param() params: NumberStringParam) {
+    return await this.service.getTransaction(params.id);
   }
 }

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ParseEnumPipe } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from '../../../infrastructure/entities/customer.entity';
 import { Repository } from 'typeorm';
 import { CustomerModel } from '../../models/customer.model';
+import { UpdateCustomerDto } from '../../dtos/updateCustomer.dto';
 
 @Injectable()
 export class CustomerService {
@@ -11,30 +12,35 @@ export class CustomerService {
     private customerRepository: Repository<CustomerEntity>,
   ) {}
 
-  async getAllCustomers(): Promise<CustomerModel[]> {
-    const customers = await this.customerRepository.find({
-      relations: ['subscription'],
-    });
-    const newCustomers: CustomerModel[] = [];
-    customers.forEach((customer) => {
-      newCustomers.push(this.getCustomerWithoutPassword(customer));
-    });
-    const customerEntities: CustomerModel[] = JSON.parse(
-      JSON.stringify(newCustomers),
-    );
-    return customerEntities;
+  async updateCustomer(customer: UpdateCustomerDto) {
+    return await this.customerRepository.save(customer);
   }
 
-  getCustomerWithoutPassword(oldCustomer: CustomerModel): CustomerModel {
-    const newCustomer: CustomerModel = {
-      id: oldCustomer.id,
-      name: oldCustomer.name,
-      email: oldCustomer.email,
-      creationDate: oldCustomer.creationDate,
-      phoneNumber: oldCustomer.phoneNumber,
-      subscription: oldCustomer.subscription,
-      active: oldCustomer.active,
-    };
-    return newCustomer;
+  async getAllFilteredCustomers(
+    active: boolean,
+    subscription: string,
+  ): Promise<CustomerModel[]> {
+    const query = this.customerRepository
+      .createQueryBuilder('customer')
+      .leftJoinAndSelect('customer.subscription', 'subscription')
+      .leftJoinAndSelect('customer.licensePlates', 'licensePlates');
+
+    if (active != null && subscription != null) {
+      query
+        .where('customer.active = :active', { active })
+        .andWhere('subscription.name = :subscription', {
+          subscription,
+        });
+    }
+    else if (active != null && subscription == null) {
+      query.where('customer.active = :active', { active });
+    }
+    else if (subscription != null && active == null) {
+      query.where('subscription.name = :subscription', {
+        subscription,
+      });
+    }
+
+    return await query.getMany();
   }
 }

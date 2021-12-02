@@ -1,4 +1,5 @@
 import { CompanyModel } from './company.model';
+import { WashTypeModel } from './washtype.model';
 
 export interface LocationModel {
   id?: number;
@@ -9,4 +10,5 @@ export interface LocationModel {
   city: string;
   latitude?: number;
   longitude?: number;
+  washTypes: WashTypeModel[];
 }

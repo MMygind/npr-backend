@@ -9,14 +9,17 @@ import { CustomerEntity } from './customer.entity';
 import { CustomerModel } from '../../core/models/customer.model';
 
 @Entity({ name: 'LicensePlate' })
-export class LicenseplateEntity {
+export class LicensePlateEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
   @Column()
   public licensePlate: string;
 
-  @ManyToOne(() => CustomerEntity)
+  @ManyToOne(
+    () => CustomerEntity,
+    (customer: CustomerEntity) => customer.licensePlates,
+  )
   @JoinColumn()
   public customer: CustomerModel;
 }

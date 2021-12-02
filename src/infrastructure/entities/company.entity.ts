@@ -1,5 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import Role from '../../core/authentication/role.enum';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { LocationEntity } from './location.entity';
+import { LocationModel } from 'src/core/models/location.model';
 
 @Entity({ name: 'Company' })
 export class CompanyEntity {
@@ -15,11 +18,11 @@ export class CompanyEntity {
   @Column()
   public password: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   //@Exclude()    to be used with class-transformer package
   public currentHashedRefreshToken?: string;
 
-  @Column('timestamp with time zone', { nullable: false, default: () => 'CURRENT_TIMESTAMP' })  
+  @Column('timestamp with time zone', { nullable: false, default: () => 'CURRENT_TIMESTAMP' })
   public creationDate: Date;
 
   @Column()
@@ -31,4 +34,8 @@ export class CompanyEntity {
     default: Role.User
   })
   public role: Role
+
+  @OneToMany(
+    () => LocationEntity, (location: LocationEntity) => location.company)
+  public locations: LocationModel[];
 }

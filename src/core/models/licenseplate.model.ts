@@ -1,6 +1,6 @@
 import { CustomerModel } from './customer.model';
 
-export interface LicenseplateModel {
+export interface LicensePlateModel {
   id?: number;
   customer: CustomerModel;
   licensePlate: string;

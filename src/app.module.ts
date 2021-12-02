@@ -7,6 +7,8 @@ import { CustomerModule } from './api/customer.module';
 import { TransactionModule } from './api/transaction.module';
 import { AdministratorModule } from './api/administrator.module';
 import { AuthenticationModule } from './api/authentication.module';
+import { LocationModule } from "./api/location.module";
+import { WashTypeModule } from "./api/washtype.module";
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { AuthenticationModule } from './api/authentication.module';
     CompanyModule,
     AdministratorModule,
     AuthenticationModule,
+    LocationModule,
+    WashTypeModule,
   ],
   controllers: [],
   providers: [],

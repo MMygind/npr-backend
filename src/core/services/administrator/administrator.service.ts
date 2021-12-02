@@ -10,15 +10,4 @@ export class AdministratorService {
     @InjectRepository(AdministratorEntity)
     private administratorRepository: Repository<AdministratorEntity>,
   ) {}
-
-  getAdministratorWithoutPassword(
-    oldAdmin: AdministratorModel,
-  ): AdministratorModel {
-    const newAdmin: AdministratorModel = {
-      id: oldAdmin.id,
-      email: oldAdmin.email,
-      name: oldAdmin.name,
-    };
-    return newAdmin;
-  }
 }

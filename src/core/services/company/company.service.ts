@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus,Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { CompanyEntity } from '../../../infrastructure/entities/company.entity';
@@ -13,15 +19,17 @@ export class CompanyService {
     private companyRepository: Repository<CompanyEntity>,
   ) {}
 
-  getCompanyWithoutPassword(oldCompany: CompanyModel): CompanyModel {
-    const newCompany: CompanyModel = {
-      id: oldCompany.id,
-      name: oldCompany.name,
-      email: oldCompany.email,
-      creationDate: oldCompany.creationDate,
-      phoneNumber: oldCompany.phoneNumber,
-    };
-    return newCompany;
+  async getCompany(id: number): Promise<CompanyModel> {
+    if (id <= 0) {
+      throw new BadRequestException('Company ID must be a positive integer');
+    }
+    const company = await this.companyRepository.findOne(id, {
+      relations: ['locations'],
+    });
+    if (!company) {
+      throw new NotFoundException(`Company with ID ${id} not found`);
+    }
+    return company;
   }
 
   async getByEmail(email: string) {
