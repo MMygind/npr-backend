@@ -33,8 +33,8 @@ export class AuthenticationController {
     } = this.authenticationService.getCookieWithJwtRefreshToken(user.id);
 
     await this.companyService.setCurrentRefreshToken(refreshToken, user.id);
-
     request.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
+    return user;
   }
 
   @Post('log-out')
@@ -45,9 +45,9 @@ export class AuthenticationController {
     request.res.setHeader('Set-Cookie', this.authenticationService.getCookiesForLogOut());
   }
 
-  // get logged in user
+  // get logged in user - NOT NEEDED () if user is returned in reposnse body at login
   @UseGuards(JwtAuthenticationGuard)
-  @Get()
+  @Get('me')
   authenticate(@Req() request: RequestWithCompany) {
     const company = request.user;
     company.password = undefined;
@@ -56,7 +56,7 @@ export class AuthenticationController {
 
   //@UseGuards(JwtRefreshGuard)
   @UseGuards(AuthGuard('jwt-refresh-token'))
-  @Get('refresh')
+  @Post('refresh')
   refresh(@Req() request: RequestWithCompany) {
     const accessTokenCookie = this.authenticationService.getCookieWithJwtAccessToken(request.user.id);
  

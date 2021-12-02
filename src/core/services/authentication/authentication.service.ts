@@ -70,6 +70,7 @@ export class AuthenticationService {
         return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`;
     }
 
+    // change path to /authentication/refresh?
     public getCookieWithJwtRefreshToken(userId: number) {
         const payload: TokenPayload = { userId };
         const token = this.jwtService.sign(payload, {
