@@ -7,13 +7,23 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { WashTypeEntity } from '../../../infrastructure/entities/washtype.entity';
 import { CompanyModel } from '../../models/company.model';
 import { CreateWashTypeDto } from '../../../api/dtos/create-washtype.dto';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+} from '@nestjs/common';
 
+// npm run test to run all tests
+// npm run -- washtype.service.spec.ts to run this specific test file
 describe('WashTypeService', () => {
+  // region Variables
   let washTypeService: WashTypeService;
   let company: CompanyModel;
   let location: LocationModel;
   let locations: LocationModel[] = [];
   let washTypes: WashTypeModel[] = [];
+
   const mockLocationService = {
     getLocation: jest
       .fn()
@@ -21,7 +31,9 @@ describe('WashTypeService', () => {
         locations.find((location) => location.id == id),
       ),
   };
+
   const mockWashTypeRepository = {
+    // mockReturnValue doesn't work in below method
     find: jest.fn().mockImplementation(() => Promise.resolve(washTypes)),
     findOne: jest
       .fn()
@@ -38,7 +50,16 @@ describe('WashTypeService', () => {
     }),
   };
 
+  let washTypeIndex = 0;
+
+  function getWashTypeFromArray(): WashTypeModel {
+    return washTypes[washTypeIndex++];
+  }
+  // endregion
+
+  // region beforeEach
   beforeEach(async () => {
+    // region TestingModule
     const module = await Test.createTestingModule({
       providers: [
         WashTypeService,
@@ -54,6 +75,9 @@ describe('WashTypeService', () => {
     }).compile();
 
     washTypeService = await module.get<WashTypeService>(WashTypeService);
+    // endregion
+
+    // region Mock data
     locations = [];
     washTypes = [];
     company = {
@@ -76,43 +100,84 @@ describe('WashTypeService', () => {
       latitude: 0,
     };
     locations.push(location);
+    washTypes.push({
+      id: 1,
+      name: 'Premium',
+      price: 159,
+      location: location,
+    });
+    washTypes.push({
+      id: 2,
+      name: 'Standard',
+      price: 129,
+      location: location,
+    });
+    washTypes.push({
+      id: 3,
+      name: 'Quick',
+      price: 99,
+      location: location,
+    });
+    // endregion
   });
 
+  // endregion
+
+  // region WashType defined test
   it('should be defined', () => {
     expect(washTypeService).toBeDefined();
   });
+  // endregion
 
+  // region getAllWashTypes tests
   describe('getAllWashTypes', () => {
-    beforeEach(() => {
-      washTypes.push({
-        id: 1,
-        name: 'Premium',
-        price: 159,
-        location: location,
-      });
-      washTypes.push({
-        id: 2,
-        name: 'Standard',
-        price: 129,
-        location: location,
-      });
-    });
-
     it('should return all wash types', async () => {
       expect(await washTypeService.getAllWashTypes()).toEqual(washTypes);
-
-      expect(mockWashTypeRepository.find).toHaveBeenCalledTimes(1);
     });
 
-    it('should return a single specified wash type', async () => {
-      const receivedWashType = await washTypeService.getWashType(2);
-
-      expect(receivedWashType.id).toEqual(2);
-      expect(receivedWashType.name).toEqual('Standard');
-      expect(receivedWashType.price).toEqual(129);
-
-      expect(mockWashTypeRepository.findOne).toHaveBeenCalledTimes(1);
-      expect(mockWashTypeRepository.findOne).toHaveBeenCalledWith(2);
+    it('should throw HttpException if array is empty', async () => {
+      washTypes = [];
+      await expect(washTypeService.getAllWashTypes()).rejects.toEqual(
+        new HttpException('No elements found', HttpStatus.NO_CONTENT),
+      );
     });
   });
+  // endregion
+
+  // region getWashType tests
+  describe('getWashType', () => {
+    it.each([
+      [1, getWashTypeFromArray],
+      [2, getWashTypeFromArray],
+      [3, getWashTypeFromArray],
+    ])(
+      'should return single wash type with ID of %s',
+      async (id, washTypeGetter) => {
+        const expectedWashType = washTypeGetter();
+        const receivedWashType = await washTypeService.getWashType(id);
+
+        expect(receivedWashType.id).toEqual(expectedWashType.id);
+        expect(receivedWashType.name).toEqual(expectedWashType.name);
+        expect(receivedWashType.price).toEqual(expectedWashType.price);
+      },
+    );
+
+    it.each([-1, 0])(
+      'should throw a BadRequestException if ID searched for is non-positive',
+      async (id: number) => {
+        await expect(washTypeService.getWashType(id)).rejects.toEqual(
+          new BadRequestException('Wash type ID must be a positive integer'),
+        );
+      },
+    );
+
+    it('should throw a NotFoundException if single wash type with matching ID is not found', async () => {
+      const highestID = 3;
+
+      await expect(washTypeService.getWashType(highestID + 1)).rejects.toEqual(
+        new NotFoundException(`Wash type with ID ${highestID + 1} not found`),
+      );
+    });
+  });
+  // endregion
 });
