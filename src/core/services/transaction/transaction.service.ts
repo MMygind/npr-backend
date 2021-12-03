@@ -50,7 +50,7 @@ export class TransactionService {
     return transactions;
   }
 
-  async getTransactionsByUser(
+  async getAllTransactionsByUser(
     options: IPaginationOptions,
     customerId: number,
   ): Promise<Pagination<TransactionModel>> {

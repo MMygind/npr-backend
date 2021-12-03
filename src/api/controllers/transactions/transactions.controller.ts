@@ -87,7 +87,7 @@ export class TransactionsController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
   ): Promise<Pagination<TransactionModel>> {
-    return await this.service.getTransactionsByUser(
+    return await this.service.getAllTransactionsByUser(
       {
         page,
         limit,
