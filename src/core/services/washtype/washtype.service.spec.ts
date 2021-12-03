@@ -49,12 +49,6 @@ describe('WashTypeService', () => {
       return model;
     }),
   };
-
-  let washTypeIndex = 0;
-
-  function getWashTypeFromArray(): WashTypeModel {
-    return washTypes[washTypeIndex++];
-  }
   // endregion
 
   // region beforeEach
@@ -147,13 +141,13 @@ describe('WashTypeService', () => {
   // region getWashType tests
   describe('getWashType', () => {
     it.each([
-      [1, getWashTypeFromArray],
-      [2, getWashTypeFromArray],
-      [3, getWashTypeFromArray],
+      [1, 0],
+      [2, 1],
+      [3, 2],
     ])(
       'should return single wash type with ID of %s',
-      async (id, washTypeGetter) => {
-        const expectedWashType = washTypeGetter();
+      async (id, arrayIndex) => {
+        const expectedWashType = washTypes[arrayIndex];
         const receivedWashType = await washTypeService.getWashType(id);
 
         expect(receivedWashType.id).toEqual(expectedWashType.id);
