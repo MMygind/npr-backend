@@ -202,6 +202,7 @@ describe('WashTypeService', () => {
   });
   // endregion
 
+  // region createWashType tests
   describe('createWashType', () => {
     it('should create and return a new wash type', async () => {
       const highestID = 3;
@@ -220,7 +221,9 @@ describe('WashTypeService', () => {
       expect(save).toHaveBeenCalledTimes(1);
     });
   });
+  // endregion
 
+  // region updateWashType tests
   describe('updateWashType', () => {
     it('should update wash type and then return it', async () => {
       save.mockImplementation((dto) => {
@@ -264,7 +267,9 @@ describe('WashTypeService', () => {
       expect(save).toHaveBeenCalledTimes(0);
     });
   });
+  // endregion
 
+  // region deleteWashType tests
   describe('deleteWashType', () => {
     it.each([1, 2, 3])(
       // these are the IDs of existing wash types in the washtypes array
@@ -300,4 +305,5 @@ describe('WashTypeService', () => {
       expect(softDelete).toHaveBeenCalledWith(highestID + 1);
     });
   });
+  // endregion
 });
