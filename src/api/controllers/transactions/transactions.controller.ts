@@ -74,6 +74,29 @@ export class TransactionsController {
     }
   }
 
+  @Get('/byUser')
+  @ApiOperation({
+    summary:
+      'Gets all transactions and pagination metadata for the specified user',
+    description:
+      'Gets all transactions and pagination metadata from the database for the specified user',
+  })
+  @ApiOkResponse({ description: 'All transactions returned' })
+  @ApiNoContentResponse({ description: 'Could not find transactions' })
+  async getTransactionsByUser(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ): Promise<Pagination<TransactionModel>> {
+    return await this.service.getTransactionsByUser(
+      {
+        page,
+        limit,
+        route: 'http://localhost:3000/transactions/byUser',
+      },
+      1,
+    );
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Gets transaction with specified ID' })
   @ApiOkResponse({ description: 'Transaction with specified ID returned' })
