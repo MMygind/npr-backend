@@ -83,7 +83,7 @@ export class TransactionsController {
   })
   @ApiOkResponse({ description: 'All transactions returned' })
   @ApiNoContentResponse({ description: 'Could not find transactions' })
-  async getTransactionsByUser(
+  async getAllTransactionsByUser(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
   ): Promise<Pagination<TransactionModel>> {
