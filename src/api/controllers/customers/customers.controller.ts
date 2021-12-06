@@ -33,7 +33,7 @@ export class CustomersController {
   ) {
     try {
       return await this.service.getAllFilteredCustomers(
-        { page, limit, route: 'http://localhost:3000/transactions' },
+        { page, limit, route: 'http://localhost:3000/customers' },
         queryValue,
         active,
         subscription,
