@@ -15,12 +15,12 @@ import { LocationModel } from '../../../core/models/location.model';
 import { CreateLocationDto } from '../../dtos/create-location.dto';
 import {
   ApiBadRequestResponse,
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiOperation,
-} from '@nestjs/swagger';
+  ApiOperation
+} from "@nestjs/swagger";
 import { UpdateLocationDto } from '../../dtos/update-location.dto';
 
 @Controller('locations')
@@ -32,6 +32,7 @@ export class LocationsController {
   @ApiOkResponse({ description: 'All locations returned' })
   @ApiNoContentResponse({ description: 'Could not find locations' })
   async getAllLocations() {
+    // should be admin only
     return await this.service.getAllLocations();
   }
 
@@ -42,8 +43,10 @@ export class LocationsController {
     description: 'Failed to get location as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Location not found' })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
   async getLocation(@Param() params: NumberStringParam) {
-    return await this.service.getLocation(params.id);
+    const hardcodedCompanyID = 1;
+    return await this.service.getLocation(params.id, hardcodedCompanyID);
   }
 
   @Post()
@@ -56,7 +59,8 @@ export class LocationsController {
   // strips properties which do not have decorators
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async createLocation(@Body() dto: CreateLocationDto) {
-    return await this.service.createLocation(dto);
+    const hardcodedCompanyID = 1;
+    return await this.service.createLocation(dto, hardcodedCompanyID);
   }
 
   @Put(':id')
@@ -70,13 +74,19 @@ export class LocationsController {
   @ApiNotFoundResponse({
     description: 'One or more resources necessary for updating were missing',
   })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
   // strips properties which do not have decorators
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async updateLocation(
     @Param() params: NumberStringParam,
     @Body() dto: UpdateLocationDto,
   ) {
-    return await this.service.updateLocation(params.id, dto);
+    const hardcodedCompanyID = 1;
+    return await this.service.updateLocation(
+      params.id,
+      dto,
+      hardcodedCompanyID,
+    );
   }
 
   @Delete(':id')
@@ -86,7 +96,9 @@ export class LocationsController {
     description: 'Failed to delete location as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Location not found' })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
   async deleteLocation(@Param() params: NumberStringParam) {
-    return await this.service.deleteLocation(params.id);
+    const hardcodedCompanyID = 1;
+    return await this.service.deleteLocation(params.id, hardcodedCompanyID);
   }
 }

@@ -1,10 +1,10 @@
 import {
-  BadRequestException,
+  BadRequestException, ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+  NotFoundException
+} from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { LocationEntity } from '../../../infrastructure/entities/location.entity';
 import { Repository } from 'typeorm';
@@ -39,15 +39,23 @@ export class LocationService {
     return locations;
   }
 
-  async getLocation(id: number): Promise<LocationModel> {
-    if (id <= 0) {
+  async getLocation(
+    locationID: number,
+    companyID: number,
+  ): Promise<LocationModel> {
+    if (locationID <= 0) {
       throw new BadRequestException('Location ID must be a positive integer');
     }
-    const location = await this.locationRepository.findOne(id, {
+    const location = await this.locationRepository.findOne(locationID, {
       relations: ['company', 'washTypes'],
     });
     if (!location) {
-      throw new NotFoundException(`Location with ID ${id} not found`);
+      throw new NotFoundException(`Location with ID ${locationID} not found`);
+    }
+    if (location.company.id !== companyID) {
+      throw new ForbiddenException(
+        `Not allowed to access location with ID ${locationID}`,
+      );
     }
     // maybe replace with querybuilder
     location.washTypes = location.washTypes.sort((a, b) =>
@@ -56,33 +64,41 @@ export class LocationService {
     return location;
   }
 
-  async createLocation(dto: CreateLocationDto): Promise<LocationModel> {
+  async createLocation(
+    dto: CreateLocationDto,
+    companyID: number,
+  ): Promise<LocationModel> {
     dto.company = await this.companyService.getCompany(dto.company.id);
     const newLocation = this.locationRepository.create(dto);
     await this.locationRepository.save(newLocation);
-    return await this.getLocation(newLocation.id);
+    return await this.getLocation(newLocation.id, companyID);
   }
 
   async updateLocation(
-    id: number,
+    locationID: number,
     dto: UpdateLocationDto,
+    companyID: number,
   ): Promise<LocationModel> {
-    if (id != dto.id) {
+    if (locationID != dto.id) {
       throw new BadRequestException('Location ID does not match parameter ID');
     }
-    await this.getLocation(dto.id); // will throw exception if it does not exist already, or id is negative
+    await this.getLocation(dto.id, companyID); // will throw exception if it does not exist already, id is negative or forbidden
     await this.locationRepository.save(dto);
-    return await this.getLocation(id);
+    return await this.getLocation(locationID, companyID);
   }
 
   // note that already soft-deleted entries can be soft-deleted again
-  async deleteLocation(id: number): Promise<boolean> {
-    if (id <= 0) {
+  async deleteLocation(
+    locationID: number,
+    companyID: number,
+  ): Promise<boolean> {
+    if (locationID <= 0) {
       throw new BadRequestException('Location ID must be a positive integer');
     }
-    const deleteResponse = await this.locationRepository.softDelete(id);
+    await this.getLocation(locationID, companyID); // will throw exception if it does not exist already, id is negative or forbidden
+    const deleteResponse = await this.locationRepository.softDelete(locationID);
     if (!deleteResponse.affected) {
-      throw new NotFoundException(`Location with ID ${id} not found`);
+      throw new NotFoundException(`Location with ID ${locationID} not found`);
     }
     return true;
   }

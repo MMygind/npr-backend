@@ -55,7 +55,10 @@ export class WashTypeService {
     dto: CreateWashTypeDto,
     companyID: number,
   ): Promise<WashTypeModel> {
-    dto.location = await this.locationService.getLocation(dto.location.id);
+    dto.location = await this.locationService.getLocation(
+      dto.location.id,
+      companyID,
+    );
     const newWashType = this.washTypeRepository.create(dto);
     await this.washTypeRepository.save(newWashType);
     return await this.getWashType(newWashType.id, companyID);

@@ -55,6 +55,10 @@ export class WashTypesController {
     description: 'Failed to create wash type as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Associated company not found' })
+  @ApiForbiddenResponse({
+    description:
+      'Could not create wash type with inaccessible location',
+  })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   // strips properties which do not have decorators
   async createWashType(@Body() dto: CreateWashTypeDto) {
