@@ -12,12 +12,12 @@ import {
 import { WashTypeService } from '../../../core/services/washtype/washtype.service';
 import {
   ApiBadRequestResponse,
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiOperation,
-} from '@nestjs/swagger';
+  ApiOperation
+} from "@nestjs/swagger";
 import { NumberStringParam } from '../../utilities/numberstringparam';
 import { CreateWashTypeDto } from '../../dtos/create-washtype.dto';
 import { UpdateWashTypeDto } from '../../dtos/update-washtype.dto';
@@ -42,6 +42,7 @@ export class WashTypesController {
     description: 'Failed to get wash type as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Wash type not found' })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
   async getWashType(@Param() params: NumberStringParam) {
     const hardcodedCompanyID = 1;
     return await this.service.getWashType(params.id, hardcodedCompanyID);
@@ -72,6 +73,7 @@ export class WashTypesController {
   @ApiNotFoundResponse({
     description: 'Associated company not found',
   })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
   // strips properties which do not have decorators
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async updateWashType(
@@ -93,6 +95,7 @@ export class WashTypesController {
     description: 'Failed to delete wash type as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Wash type not found' })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
   async deleteWashType(@Param() params: NumberStringParam) {
     const hardcodedCompanyID = 1;
     return await this.service.deleteWashType(params.id, hardcodedCompanyID);
