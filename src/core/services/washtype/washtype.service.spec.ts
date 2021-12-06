@@ -9,6 +9,7 @@ import { CompanyModel } from '../../models/company.model';
 import { CreateWashTypeDto } from '../../../api/dtos/create-washtype.dto';
 import {
   BadRequestException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   NotFoundException,
@@ -204,6 +205,21 @@ describe('WashTypeService', () => {
 
       expect(findOne).toHaveBeenCalledTimes(1);
     });
+
+    it('should throw a ForbiddenException if logged-in company not allowed to access wash type with ID', async () => {
+      const washTypeID = 1; // should only be accessed by company with ID 1
+      const companyID = 2;
+
+      await expect(
+        washTypeService.getWashType(washTypeID, companyID),
+      ).rejects.toEqual(
+        new ForbiddenException(
+          `Not allowed to access wash type with ID ${washTypeID}`,
+        ),
+      );
+
+      expect(findOne).toHaveBeenCalledTimes(1);
+    });
   });
   // endregion
 
@@ -244,7 +260,7 @@ describe('WashTypeService', () => {
     });
 
     it('should update wash type and then return it', async () => {
-      const washTypeID = 1;
+      const idParam = 1;
       const washTypeDto: UpdateWashTypeDto = {
         id: 1,
         name: 'Gold', // old value is 'Premium'
@@ -252,7 +268,7 @@ describe('WashTypeService', () => {
       };
 
       const updatedWashType = await washTypeService.updateWashType(
-        washTypeID,
+        idParam,
         washTypeDto,
         company.id,
       );
@@ -280,6 +296,43 @@ describe('WashTypeService', () => {
       );
 
       expect(save).toHaveBeenCalledTimes(0);
+    });
+
+    it('should throw a NotFoundException if no wash type with ID to update is found', async () => {
+      const idParam = 4;
+      const washTypeDto: UpdateWashTypeDto = {
+        id: 4,
+        name: 'Gold',
+        price: 189,
+      };
+
+      await expect(
+        washTypeService.updateWashType(idParam, washTypeDto, company.id),
+      ).rejects.toEqual(
+        new NotFoundException(`Wash type with ID ${washTypeDto.id} not found`),
+      );
+
+      expect(save).toHaveBeenCalledTimes(0);
+    });
+
+    it('should throw a ForbiddenException if logged-in company not allowed to access wash type with ID', async () => {
+      const idParam = 1;
+      const washTypeDto: UpdateWashTypeDto = {
+        id: 1,
+        name: 'Gold',
+        price: 189,
+      };
+      const companyID = 2;
+
+      await expect(
+        washTypeService.updateWashType(idParam, washTypeDto, companyID),
+      ).rejects.toEqual(
+        new ForbiddenException(
+          `Not allowed to access wash type with ID ${washTypeDto.id}`,
+        ),
+      );
+
+      expect(findOne).toHaveBeenCalledTimes(1);
     });
   });
   // endregion
@@ -333,6 +386,22 @@ describe('WashTypeService', () => {
 
       expect(softDelete).toHaveBeenCalledTimes(1);
       expect(softDelete).toHaveBeenCalledWith(washTypeID);
+    });
+
+    it('should throw a ForbiddenException if logged-in company not allowed to access wash type with ID', async () => {
+      const washTypeID = 1; // should only be accessed by company with ID 1
+      const companyID = 2;
+
+      await expect(
+        washTypeService.getWashType(washTypeID, companyID),
+      ).rejects.toEqual(
+        new ForbiddenException(
+          `Not allowed to access wash type with ID ${washTypeID}`,
+        ),
+      );
+
+      expect(findOne).toHaveBeenCalledTimes(1);
+      expect(softDelete).toHaveBeenCalledTimes(0);
     });
   });
   // endregion
