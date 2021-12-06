@@ -165,23 +165,27 @@ describe('WashTypeService', () => {
       [3, 2],
     ])(
       'should return single wash type with ID of %s',
-      async (id, arrayIndex) => {
+      async (washTypeID, arrayIndex) => {
         const expectedWashType = washTypes[arrayIndex];
-        const receivedWashType = await washTypeService.getWashType(id);
+        const receivedWashType = await washTypeService.getWashType(
+          washTypeID,
+          company.id,
+        );
 
         expect(receivedWashType.id).toEqual(expectedWashType.id);
         expect(receivedWashType.name).toEqual(expectedWashType.name);
         expect(receivedWashType.price).toEqual(expectedWashType.price);
 
         expect(findOne).toHaveBeenCalledTimes(1);
-        expect(findOne).toHaveBeenCalledWith(id);
       },
     );
 
     it.each([-1, 0])(
       'should throw a BadRequestException if ID %s searched for is non-positive',
-      async (id: number) => {
-        await expect(washTypeService.getWashType(id)).rejects.toEqual(
+      async (washTypeID: number) => {
+        await expect(
+          washTypeService.getWashType(washTypeID, company.id),
+        ).rejects.toEqual(
           new BadRequestException('Wash type ID must be a positive integer'),
         );
 
@@ -192,12 +196,13 @@ describe('WashTypeService', () => {
     it('should throw a NotFoundException if single wash type with matching ID is not found', async () => {
       const highestID = 3;
 
-      await expect(washTypeService.getWashType(highestID + 1)).rejects.toEqual(
+      await expect(
+        washTypeService.getWashType(highestID + 1, company.id),
+      ).rejects.toEqual(
         new NotFoundException(`Wash type with ID ${highestID + 1} not found`),
       );
 
       expect(findOne).toHaveBeenCalledTimes(1);
-      expect(findOne).toHaveBeenCalledWith(highestID + 1);
     });
   });
   // endregion
@@ -211,7 +216,10 @@ describe('WashTypeService', () => {
         price: 100,
         location: location,
       };
-      const savedWashType = await washTypeService.createWashType(washTypeDto);
+      const savedWashType = await washTypeService.createWashType(
+        washTypeDto,
+        company.id,
+      );
 
       expect(savedWashType.id).toEqual(highestID + 1);
       expect(savedWashType.name).toEqual(washTypeDto.name);
@@ -225,21 +233,28 @@ describe('WashTypeService', () => {
 
   // region updateWashType tests
   describe('updateWashType', () => {
-    it('should update wash type and then return it', async () => {
+    beforeEach(async () => {
       save.mockImplementation((dto) => {
-        const index = washTypes.findIndex((washType) => washType.id == dto.id);
-        washTypes[index] = dto;
+        const foundWashType = washTypes.find(
+          (washType) => washType.id == dto.id,
+        );
+        foundWashType.name = dto.name;
+        foundWashType.price = dto.price;
       });
+    });
 
-      const idParam = 1;
+    it('should update wash type and then return it', async () => {
+      const washTypeID = 1;
       const washTypeDto: UpdateWashTypeDto = {
         id: 1,
         name: 'Gold', // old value is 'Premium'
         price: 189, // old value is 159
       };
+
       const updatedWashType = await washTypeService.updateWashType(
-        idParam,
+        washTypeID,
         washTypeDto,
+        company.id,
       );
 
       expect(updatedWashType.id).toEqual(washTypeDto.id);
@@ -259,7 +274,7 @@ describe('WashTypeService', () => {
       };
 
       await expect(
-        washTypeService.updateWashType(idParam, washTypeDto),
+        washTypeService.updateWashType(idParam, washTypeDto, company.id),
       ).rejects.toEqual(
         new BadRequestException('Wash type ID does not match parameter ID'),
       );
@@ -274,18 +289,22 @@ describe('WashTypeService', () => {
     it.each([1, 2, 3])(
       // these are the IDs of existing wash types in the washtypes array
       'should delete a wash type with ID %s and return true when done',
-      async (id) => {
-        expect(await washTypeService.deleteWashType(id)).toEqual(true);
+      async (washTypeID) => {
+        expect(
+          await washTypeService.deleteWashType(washTypeID, company.id),
+        ).toEqual(true);
 
         expect(softDelete).toHaveBeenCalledTimes(1);
-        expect(softDelete).toHaveBeenCalledWith(id);
+        expect(softDelete).toHaveBeenCalledWith(washTypeID);
       },
     );
 
     it.each([-1, 0])(
       'should throw a BadRequestException if wash type ID %s is non-positive',
-      async (id) => {
-        await expect(washTypeService.deleteWashType(id)).rejects.toEqual(
+      async (washTypeID) => {
+        await expect(
+          washTypeService.deleteWashType(washTypeID, company.id),
+        ).rejects.toEqual(
           new BadRequestException('Wash type ID must be a positive integer'),
         );
 
@@ -293,16 +312,27 @@ describe('WashTypeService', () => {
       },
     );
 
-    it('should throw a NotFoundException if no wash type with ID %s is found', async () => {
-      const highestID = 3;
+    it('should throw a InternalServerErrorException if wash type with ID %s not deleted', async () => {
+      const washTypeID = 3;
+      softDelete.mockImplementation(() => {
+        const result: UpdateResult = {
+          raw: null,
+          generatedMaps: null,
+          affected: 0,
+        };
+        return result;
+      });
+
       await expect(
-        washTypeService.deleteWashType(highestID + 1),
+        washTypeService.deleteWashType(washTypeID, company.id),
       ).rejects.toEqual(
-        new NotFoundException(`Wash type with ID ${highestID + 1} not found`),
+        new NotFoundException(
+          `Operation to delete Wash type with ID ${washTypeID} failed`,
+        ),
       );
 
       expect(softDelete).toHaveBeenCalledTimes(1);
-      expect(softDelete).toHaveBeenCalledWith(highestID + 1);
+      expect(softDelete).toHaveBeenCalledWith(washTypeID);
     });
   });
   // endregion

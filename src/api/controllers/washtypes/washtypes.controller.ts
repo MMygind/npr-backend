@@ -31,6 +31,7 @@ export class WashTypesController {
   @ApiOkResponse({ description: 'All wash types returned' })
   @ApiNoContentResponse({ description: 'Could not find wash types' })
   async getAllWashTypes() {
+    // should be admin only
     return await this.service.getAllWashTypes();
   }
 
@@ -42,7 +43,8 @@ export class WashTypesController {
   })
   @ApiNotFoundResponse({ description: 'Wash type not found' })
   async getWashType(@Param() params: NumberStringParam) {
-    return await this.service.getWashType(params.id);
+    const hardcodedCompanyID = 1;
+    return await this.service.getWashType(params.id, hardcodedCompanyID);
   }
 
   @Post()
@@ -55,7 +57,8 @@ export class WashTypesController {
   @UsePipes(new ValidationPipe({ whitelist: true }))
   // strips properties which do not have decorators
   async createWashType(@Body() dto: CreateWashTypeDto) {
-    return await this.service.createWashType(dto);
+    const hardcodedCompanyID = 1;
+    return await this.service.createWashType(dto, hardcodedCompanyID);
   }
 
   @Put(':id')
@@ -75,7 +78,12 @@ export class WashTypesController {
     @Param() params: NumberStringParam,
     @Body() dto: UpdateWashTypeDto,
   ) {
-    return await this.service.updateWashType(params.id, dto);
+    const hardcodedCompanyID = 1;
+    return await this.service.updateWashType(
+      params.id,
+      dto,
+      hardcodedCompanyID,
+    );
   }
 
   @Delete(':id')
@@ -86,6 +94,7 @@ export class WashTypesController {
   })
   @ApiNotFoundResponse({ description: 'Wash type not found' })
   async deleteWashType(@Param() params: NumberStringParam) {
-    return await this.service.deleteWashType(params.id);
+    const hardcodedCompanyID = 1;
+    return await this.service.deleteWashType(params.id, hardcodedCompanyID);
   }
 }
