@@ -50,6 +50,23 @@ export class TransactionService {
     return transactions;
   }
 
+  async getAllTransactionsByUser(
+    options: IPaginationOptions,
+    customerId: number,
+  ): Promise<Pagination<TransactionModel>> {
+    const queryBuilder = this.transactionRepository
+      .createQueryBuilder('transaction')
+      .leftJoinAndSelect('transaction.location', 'location')
+      .leftJoinAndSelect('transaction.washType', 'washType')
+      .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
+      .leftJoinAndSelect('licensePlate.customer', 'customer')
+      .orderBy('transaction.timestamp', 'DESC');
+
+    queryBuilder.where('customer.id = :customerId', { customerId });
+
+    return await paginate<TransactionModel>(queryBuilder, options);
+  }
+
   async getFilteredTransactions(
     options: IPaginationOptions,
     queryValue: string,
