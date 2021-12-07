@@ -12,12 +12,13 @@ import {
 import { WashTypeService } from '../../../core/services/washtype/washtype.service';
 import {
   ApiBadRequestResponse,
-  ApiCreatedResponse, ApiForbiddenResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiOperation
-} from "@nestjs/swagger";
+  ApiOperation,
+} from '@nestjs/swagger';
 import { NumberStringParam } from '../../utilities/numberstringparam';
 import { CreateWashTypeDto } from '../../dtos/create-washtype.dto';
 import { UpdateWashTypeDto } from '../../dtos/update-washtype.dto';
@@ -56,8 +57,7 @@ export class WashTypesController {
   })
   @ApiNotFoundResponse({ description: 'Associated company not found' })
   @ApiForbiddenResponse({
-    description:
-      'Could not create wash type with inaccessible location',
+    description: 'Could not create wash type with inaccessible location',
   })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   // strips properties which do not have decorators

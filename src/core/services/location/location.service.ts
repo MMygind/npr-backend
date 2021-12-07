@@ -68,6 +68,11 @@ export class LocationService {
     dto: CreateLocationDto,
     companyID: number,
   ): Promise<LocationModel> {
+    if (dto.company.id !== companyID) {
+      throw new ForbiddenException(
+        `Not allowed to access company with ID ${dto.company.id}`,
+      );
+    }
     dto.company = await this.companyService.getCompany(dto.company.id);
     const newLocation = this.locationRepository.create(dto);
     await this.locationRepository.save(newLocation);

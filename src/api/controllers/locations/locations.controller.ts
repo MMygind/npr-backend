@@ -15,12 +15,13 @@ import { LocationModel } from '../../../core/models/location.model';
 import { CreateLocationDto } from '../../dtos/create-location.dto';
 import {
   ApiBadRequestResponse,
-  ApiCreatedResponse, ApiForbiddenResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiOperation
-} from "@nestjs/swagger";
+  ApiOperation,
+} from '@nestjs/swagger';
 import { UpdateLocationDto } from '../../dtos/update-location.dto';
 
 @Controller('locations')
@@ -56,6 +57,9 @@ export class LocationsController {
     description: 'Failed to create location as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Associated company not found' })
+  @ApiForbiddenResponse({
+    description: 'Could not create location with inaccessible company',
+  })
   // strips properties which do not have decorators
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async createLocation(@Body() dto: CreateLocationDto) {
