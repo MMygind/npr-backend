@@ -1,7 +1,15 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { LocationEntity } from './location.entity';
 import { LocationModel } from '../../core/models/location.model';
+import { CustomerModel } from '../../core/models/customer.model';
+import { CustomerEntity } from './customer.entity';
 
 @Entity({ name: 'Company' })
 export class CompanyEntity {
@@ -27,6 +35,12 @@ export class CompanyEntity {
 
   @Column()
   public phoneNumber: string;
+
+  @OneToMany(
+    () => CustomerEntity,
+    (customer: CustomerEntity) => customer.company,
+  )
+  public customers: CustomerModel[];
 
   @OneToMany(
     () => LocationEntity,

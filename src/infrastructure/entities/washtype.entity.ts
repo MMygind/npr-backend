@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CompanyEntity } from './company.entity';
-import { CompanyModel } from '../../core/models/company.model';
+import { LocationEntity } from './location.entity';
+import { LocationModel } from '../../core/models/location.model';
 
 @Entity({ name: 'WashType' })
 export class WashTypeEntity {
@@ -20,9 +20,12 @@ export class WashTypeEntity {
   @Column()
   public price: number;
 
-  @ManyToOne(() => CompanyEntity)
+  @ManyToOne(
+    () => LocationEntity,
+    (location: LocationEntity) => location.washTypes,
+  )
   @JoinColumn()
-  public company: CompanyModel;
+  public location: LocationModel;
 
   @DeleteDateColumn()
   public deletedAt: Date;

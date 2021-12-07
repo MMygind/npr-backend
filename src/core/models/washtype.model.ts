@@ -1,8 +1,8 @@
-import { CompanyModel } from './company.model';
+import { LocationModel } from './location.model';
 
 export interface WashTypeModel {
   id?: number;
   name: string;
   price: number;
-  company: CompanyModel;
+  location: LocationModel;
 }
