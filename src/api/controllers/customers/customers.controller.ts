@@ -2,8 +2,10 @@ import {
   BadRequestException,
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   NotFoundException,
+  ParseIntPipe,
   Put,
   Query,
 } from '@nestjs/common';
@@ -23,13 +25,20 @@ export class CustomersController {
   @ApiResponse({ status: 200, description: 'Success' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   async getAllFilteredCustomers(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+    @Query('queryValue') queryValue: string,
     @Query('active') active: boolean,
     @Query('subscription') subscription: string,
   ) {
     try {
-      return await this.service.getAllFilteredCustomers(active, subscription);
-    }
-    catch {
+      return await this.service.getAllFilteredCustomers(
+        { page, limit, route: 'http://localhost:3000/customers' },
+        queryValue,
+        active,
+        subscription,
+      );
+    } catch {
       throw new BadRequestException('Could not get list of customers');
     }
   }
