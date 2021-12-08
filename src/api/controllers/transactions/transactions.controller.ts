@@ -40,38 +40,19 @@ export class TransactionsController {
     @Query('location') location: string,
     @Query('customerType') customerType: string,
   ): Promise<Pagination<TransactionModel>> {
-    if (
-      (queryValue === null &&
-        startDate === null &&
-        washType === null &&
-        location === null &&
-        customerType === null) ||
-      (queryValue === undefined &&
-        startDate === undefined &&
-        washType === undefined &&
-        location === undefined &&
-        customerType === undefined)
-    ) {
-      return await this.service.getAllTransactions({
+    return this.service.getFilteredTransactions(
+      {
         page,
         limit,
         route: 'http://localhost:3000/transactions',
-      });
-    } else {
-      return this.service.getFilteredTransactions(
-        {
-          page,
-          limit,
-          route: 'http://localhost:3000/transactions',
-        },
-        queryValue,
-        startDate,
-        endDate,
-        washType,
-        location,
-        customerType,
-      );
-    }
+      },
+      queryValue,
+      startDate,
+      endDate,
+      washType,
+      location,
+      customerType,
+    );
   }
 
   @Get('/byUser')
