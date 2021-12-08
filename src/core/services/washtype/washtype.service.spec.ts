@@ -158,6 +158,88 @@ describe('WashTypeService', () => {
   });
   // endregion
 
+  // region getLocationWashTypes test
+  describe('getLocationWashTypes', () => {
+    let idToSearchFor;
+
+    beforeEach(async () => {
+      find.mockImplementation(() =>
+        washTypes.filter((washType) => washType.location.id == idToSearchFor),
+      );
+      const secondLocation: LocationModel = {
+        id: 2,
+        name: 'Second Mock Location',
+        company: company,
+        washTypes: [],
+        address: 'Mock Street',
+        postalCode: 1000,
+        city: 'Mock City',
+        longitude: 0,
+        latitude: 0,
+      };
+      locations.push(secondLocation);
+      const thirdLocation: LocationModel = {
+        id: 3,
+        name: 'Third Mock Location',
+        company: company,
+        washTypes: [],
+        address: 'Mock Street',
+        postalCode: 1000,
+        city: 'Mock City',
+        longitude: 0,
+        latitude: 0,
+      };
+      locations.push(thirdLocation);
+      washTypes.push({
+        id: 4,
+        name: 'Gold',
+        price: 199,
+        location: secondLocation,
+      });
+    });
+
+    it.each([
+      [1, [1, 2, 3]],
+      [2, [4]],
+    ])(
+      'should return all wash types for location with ID %s',
+      async (locationID: number, expectedWashTypeIDs: number[]) => {
+        idToSearchFor = locationID;
+        const expectedWashTypes = washTypes.filter((washType) =>
+          expectedWashTypeIDs.includes(washType.id),
+        );
+        const foundWashTypes = await washTypeService.getLocationWashTypes(
+          locationID,
+          company.id,
+        );
+
+        expect(foundWashTypes.length).toEqual(expectedWashTypes.length);
+
+        for (const index in foundWashTypes) {
+          const found = foundWashTypes[index];
+          const expected = expectedWashTypes[index];
+          expect(found.id).toEqual(expected.id);
+          expect(found.name).toEqual(expected.name);
+          expect(found.price).toEqual(expected.price);
+        }
+
+        expect(find).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    it('should throw an HttpException if array is empty', async () => {
+      idToSearchFor = 3;
+      await expect(
+        washTypeService.getLocationWashTypes(idToSearchFor, company.id),
+      ).rejects.toEqual(
+        new HttpException('No elements found', HttpStatus.NO_CONTENT),
+      );
+
+      expect(find).toHaveBeenCalledTimes(1);
+    });
+  });
+  // endregion
+
   // region getWashType tests
   describe('getWashType', () => {
     it.each([
