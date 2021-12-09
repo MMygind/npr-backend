@@ -1,10 +1,11 @@
 import {
-  BadRequestException, ForbiddenException,
+  BadRequestException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
-  NotFoundException
-} from "@nestjs/common";
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LocationEntity } from '../../../infrastructure/entities/location.entity';
 import { Repository } from 'typeorm';
@@ -26,16 +27,21 @@ export class LocationService {
       relations: ['company', 'washTypes'],
       order: { name: 'ASC' },
     });
-    if (locations.length == 0) {
+    if (locations == undefined || locations.length == 0) {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
     }
-    // maybe replace with querybuilder
-    locations.forEach(
-      (location) =>
-        (location.washTypes = location.washTypes.sort((a, b) =>
-          a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1,
-        )),
-    );
+    locations.forEach((location) => this.sortLocationWashTypes(location));
+    return locations;
+  }
+
+  async getCompanyLocations(companyID: number): Promise<LocationModel[]> {
+    const locations = await this.locationRepository.find({
+      where: { company: { id: companyID } },
+      order: { name: 'ASC' },
+    });
+    if (locations == undefined || locations.length == 0) {
+      throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
+    }
     return locations;
   }
 
@@ -57,10 +63,7 @@ export class LocationService {
         `Not allowed to access location with ID ${locationID}`,
       );
     }
-    // maybe replace with querybuilder
-    location.washTypes = location.washTypes.sort((a, b) =>
-      a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1,
-    );
+    this.sortLocationWashTypes(location);
     return location;
   }
 
@@ -106,5 +109,12 @@ export class LocationService {
       throw new NotFoundException(`Location with ID ${locationID} not found`);
     }
     return true;
+  }
+
+  sortLocationWashTypes(location: LocationModel) {
+    // maybe replace with querybuilder
+    location.washTypes = location.washTypes.sort((a, b) =>
+      a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1,
+    );
   }
 }

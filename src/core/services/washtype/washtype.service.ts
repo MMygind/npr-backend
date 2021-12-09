@@ -3,9 +3,10 @@ import {
   ForbiddenException,
   HttpException,
   HttpStatus,
-  Injectable, InternalServerErrorException,
-  NotFoundException
-} from "@nestjs/common";
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WashTypeEntity } from '../../../infrastructure/entities/washtype.entity';
 import { Repository } from 'typeorm';
@@ -24,7 +25,21 @@ export class WashTypeService {
 
   async getAllWashTypes(): Promise<WashTypeModel[]> {
     const washTypes = await this.washTypeRepository.find();
-    if (washTypes.length == 0) {
+    if (washTypes == undefined || washTypes.length == 0) {
+      throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
+    }
+    return washTypes;
+  }
+
+  async getLocationWashTypes(
+    locationID: number,
+    companyID: number,
+  ): Promise<WashTypeModel[]> {
+    await this.locationService.getLocation(locationID, companyID); // throws exception if location does not belong to logged-in company
+    const washTypes = await this.washTypeRepository.find({
+      where: { location: { id: locationID } },
+    });
+    if (washTypes == undefined || washTypes.length == 0) {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
     }
     return washTypes;
@@ -41,6 +56,7 @@ export class WashTypeService {
       relations: ['location', 'location.company'],
     });
     if (!washType) {
+      // should ForbiddenException be shown first?
       throw new NotFoundException(`Wash type with ID ${washTypeID} not found`);
     }
     if (washType.location.company.id !== companyID) {

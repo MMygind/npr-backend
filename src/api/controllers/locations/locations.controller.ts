@@ -37,6 +37,19 @@ export class LocationsController {
     return await this.service.getAllLocations();
   }
 
+  @Get('/thisCompany')
+  @ApiOperation({ summary: 'Get locations for authenticated company user' })
+  @ApiOkResponse({
+    description: 'All locations for authenticated company user returned',
+  })
+  @ApiNoContentResponse({
+    description: 'Could not find locations for authenticated company user',
+  })
+  async getCompanyLocations() {
+    const hardcodedCompanyID = 1;
+    return await this.service.getCompanyLocations(hardcodedCompanyID);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get location with specified ID' })
   @ApiOkResponse({ description: 'Location with specified ID returned' })

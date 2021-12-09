@@ -36,6 +36,25 @@ export class WashTypesController {
     return await this.service.getAllWashTypes();
   }
 
+  @Get('/byLocation/:id')
+  @ApiOperation({
+    summary: 'Get all wash types for location with specified ID',
+  })
+  @ApiOkResponse({
+    description: 'All wash types for location with specified ID returned',
+  })
+  @ApiNoContentResponse({
+    description: 'Could not find wash types for location with specified ID',
+  })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
+  async getLocationWashTypes(@Param() params: NumberStringParam) {
+    const hardcodedCompanyID = 1;
+    return await this.service.getLocationWashTypes(
+      params.id,
+      hardcodedCompanyID,
+    );
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get wash type with specified ID' })
   @ApiOkResponse({ description: 'Wash type with specified ID returned' })
