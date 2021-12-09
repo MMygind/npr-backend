@@ -14,8 +14,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-    methods: 'GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS',
-  });
 
   const config = new DocumentBuilder()
     .setTitle('Example Swagger')
