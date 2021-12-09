@@ -35,6 +35,12 @@ import { WashTypeEntity } from './entities/washtype.entity';
           WashTypeEntity,
         ],
         synchronize: true,
+        ssl: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
       }),
     }),
   ],
