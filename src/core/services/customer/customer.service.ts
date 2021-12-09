@@ -26,7 +26,8 @@ export class CustomerService {
     const query = this.customerRepository
       .createQueryBuilder('customer')
       .leftJoinAndSelect('customer.subscription', 'subscription')
-      .leftJoinAndSelect('customer.licensePlates', 'licensePlates');
+      .leftJoinAndSelect('customer.licensePlates', 'licensePlates')
+      .orderBy('customer.name', 'ASC');
 
     if (active != null && subscription != null) {
       query
