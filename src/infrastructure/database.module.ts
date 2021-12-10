@@ -1,6 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AccountEntity } from './entities/account.entity';
+import { AdministratorEntity } from './entities/administrator.entity';
+import { CompanyEntity } from './entities/company.entity';
+import { CustomerEntity } from './entities/customer.entity';
+import { LicensePlateEntity } from './entities/licenseplate.entity';
+import { LocationEntity } from './entities/location.entity';
+import { SubscriptionEntity } from './entities/subscription.entity';
+import { TransactionEntity } from './entities/transaction.entity';
+import { WashTypeEntity } from './entities/washtype.entity';
 
 @Module({
   imports: [
@@ -14,14 +23,17 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [],
-        synchronize: true,
-        ssl: true,
-        extra: {
-          ssl: {
-            rejectUnauthorized: false,
-          },
-        },
+        entities: [
+          AccountEntity,
+          AdministratorEntity,
+          CompanyEntity,
+          CustomerEntity,
+          LicensePlateEntity,
+          LocationEntity,
+          SubscriptionEntity,
+          TransactionEntity,
+          WashTypeEntity,
+        ],
       }),
     }),
   ],
