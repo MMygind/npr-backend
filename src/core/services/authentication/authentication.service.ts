@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import CreateCompanyDto from 'src/core/dtos/createCompany.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import TokenPayload from 'src/core/authentication/tokenPayload.interface';
+import TokenPayload from 'src/core/authentication/web/tokenPayload.interface';
 
 @Injectable()
 export class AuthenticationService {

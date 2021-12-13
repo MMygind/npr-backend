@@ -40,6 +40,7 @@ export class TransactionsController {
     @Query('location') location: string,
     @Query('customerType') customerType: string,
   ): Promise<Pagination<TransactionModel>> {
+    console.log("ok")
     if (
       (queryValue === null &&
         startDate === null &&

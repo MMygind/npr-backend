@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AuthenticationService } from '../core/services/authentication/authentication.service';
-import { CompanyModule } from './company.module';
 import { AuthenticationController } from './controllers/authentication/authentication.controller';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from '../core/authentication/local.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from 'src/core/authentication/jwt.strategy';
-import { JwtRefreshTokenStrategy } from 'src/core/authentication/jwtRefreshToken.strategy';
+import { AuthenticationService } from 'src/core/services/authentication/authentication.service';
+import { CompanyModule } from '../company.module';
+import { LocalStrategy } from 'src/core/authentication/web/strategies/local.strategy';
+import { JwtStrategy } from 'src/core/authentication/web/strategies/jwt.strategy';
+import { JwtRefreshTokenStrategy } from 'src/core/authentication/web/strategies/jwtRefreshToken.strategy';
  
 @Module({
   imports: [

@@ -6,10 +6,15 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(cookieParser());
   app.enableCors({
-    origin: true,
+    //origin: true,
+    credentials: true,
+    origin: ['http://localhost:4200', 'your-production-domain'],
     methods: 'GET,PUT,PATCH,POST,DELETE',
+    //allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization,authorization,X-Forwarded-for',
   });
+
 
   app.useGlobalPipes(new ValidationPipe());
 
@@ -23,8 +28,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
-  app.use(cookieParser());
   
   await app.listen(3000);
 }

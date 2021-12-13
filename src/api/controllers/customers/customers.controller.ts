@@ -1,10 +1,6 @@
 import { CustomerService } from '../../../core/services/customer/customer.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import JwtAuthenticationGuard from 'src/core/authentication/jwtAuthentication.guard';
-import RoleGuard from 'src/core/authentication/role.guard';
-import Role from 'src/core/authentication/role.enum';
-import RequestWithCompany from 'src/core/authentication/requestWithCompany.interface';
-import { string } from '@hapi/joi';
+import JwtAuthenticationGuard from 'src/core/authentication/web/guards/jwtAuthentication.guard';
 import {
   BadRequestException,
   Body,
@@ -13,7 +9,6 @@ import {
   NotFoundException,
   Put,
   Query,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UpdateCustomerDto } from '../../../core/dtos/updateCustomer.dto';
@@ -22,7 +17,7 @@ import { UpdateCustomerDto } from '../../../core/dtos/updateCustomer.dto';
 export class CustomersController {
   constructor(private service: CustomerService) { }
 
-  @UseGuards(RoleGuard(Role.Admin))
+  //@UseGuards(RoleGuard(Role.Admin))
   @UseGuards(JwtAuthenticationGuard)
   @Get()
   @ApiOperation({
@@ -34,12 +29,8 @@ export class CustomersController {
   async getAllFilteredCustomers(
     @Query('active') active: boolean,
     @Query('subscription') subscription: string,
-    @Req() request: RequestWithCompany,
   ) {
     try {
-      const { user } = request;
-      const id = user.id;
-      console.log("user id: " + id);
       return await this.service.getAllFilteredCustomers(active, subscription);
     }
     catch {

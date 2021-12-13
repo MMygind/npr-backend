@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { CompanyService } from 'src/core/services/company/company.service';
-import TokenPayload from 'src/core/authentication/tokenPayload.interface';
+import TokenPayload from 'src/core/authentication/web/tokenPayload.interface';
 
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(

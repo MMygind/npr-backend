@@ -1,4 +1,4 @@
-import Role from '../../core/authentication/role.enum';
+import Role from '../../core/authentication/web/role.enum';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { LocationEntity } from './location.entity';
@@ -19,7 +19,7 @@ export class CompanyEntity {
   public password: string;
 
   @Column({ nullable: true })
-  //@Exclude()    to be used with class-transformer package
+  @Exclude() // to be used stripped in controller by class-transformer package
   public currentHashedRefreshToken?: string;
 
   @Column('timestamp with time zone', { nullable: false, default: () => 'CURRENT_TIMESTAMP' })

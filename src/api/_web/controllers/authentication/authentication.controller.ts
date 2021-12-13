@@ -1,15 +1,14 @@
 import { Body, Req, Controller, HttpCode, Post, UseGuards, Res, Get, ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 import { AuthenticationService } from 'src/core/services/authentication/authentication.service';
-import { LocalAuthenticationGuard } from 'src/core/authentication/localAuthenticationGuard';
-import CreateCompanyDto from 'src/core/dtos/createCompany.dto';
-import JwtAuthenticationGuard from 'src/core/authentication/jwtAuthentication.guard';
-import RequestWithCompany from 'src/core/authentication/requestWithCompany.interface';
+import { CreateCompanyDto } from 'src/core/dtos/createCompany.dto';
+import RequestWithCompany from 'src/core/authentication/web/requestWithCompany.interface';
 import { CompanyService } from 'src/core/services/company/company.service';
-import JwtRefreshGuard from 'src/core/authentication/jwtRefresh.guard';
-import { AuthGuard } from '@nestjs/passport';
- 
-@Controller('authentication')
-//@UseInterceptors(ClassSerializerInterceptor)
+import { LocalAuthenticationGuard } from 'src/core/authentication/web/guards/localAuthentication.guard';
+import JwtAuthenticationGuard from 'src/core/authentication/web/guards/jwtAuthentication.guard';
+import JwtRefreshGuard from 'src/core/authentication/web/guards/jwtRefresh.guard';
+
+@Controller('web/authentication')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
@@ -45,7 +44,7 @@ export class AuthenticationController {
     request.res.setHeader('Set-Cookie', this.authenticationService.getCookiesForLogOut());
   }
 
-  // get logged in user - NOT NEEDED () if user is returned in reposnse body at login
+  // get logged in user
   @UseGuards(JwtAuthenticationGuard)
   @Get('me')
   authenticate(@Req() request: RequestWithCompany) {
@@ -54,8 +53,7 @@ export class AuthenticationController {
     return company;
   }
 
-  //@UseGuards(JwtRefreshGuard)
-  @UseGuards(AuthGuard('jwt-refresh-token'))
+  @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   refresh(@Req() request: RequestWithCompany) {
     const accessTokenCookie = this.authenticationService.getCookieWithJwtAccessToken(request.user.id);
