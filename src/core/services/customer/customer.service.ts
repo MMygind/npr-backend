@@ -1,10 +1,19 @@
-import { Injectable, ParseEnumPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  ParseEnumPipe,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from '../../../infrastructure/entities/customer.entity';
 import { Brackets, Repository } from 'typeorm';
 import { CustomerModel } from '../../models/customer.model';
 import { UpdateCustomerDto } from '../../dtos/updateCustomer.dto';
-import { IPaginationOptions, paginate, Pagination } from "nestjs-typeorm-paginate";
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class CustomerService {
@@ -76,5 +85,20 @@ export class CustomerService {
     }
 
     return await paginate<CustomerModel>(query, options);
+  }
+
+  async getCustomerById(id: number): Promise<CustomerModel> {
+    if (id <= 0) {
+      throw new BadRequestException('ID must be a positive integer');
+    }
+    const customer = await this.customerRepository.findOne(id, {
+      relations: ['subscription', 'licensePlates'],
+      withDeleted: true,
+    });
+
+    if (!customer) {
+      throw new NotFoundException(`Customer with ID ${id} not found`);
+    }
+    return customer;
   }
 }

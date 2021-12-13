@@ -128,7 +128,7 @@ export class TransactionService {
   }
 
   async getTransaction(id: number): Promise<TransactionModel> {
-    if (id >= 0) {
+    if (id <= 0) {
       throw new BadRequestException(
         'Transaction ID must be a positive integer',
       );

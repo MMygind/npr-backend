@@ -5,13 +5,21 @@ import {
   DefaultValuePipe,
   Get,
   NotFoundException,
+  Param,
   ParseIntPipe,
   Put,
   Query,
 } from '@nestjs/common';
 import { CustomerService } from '../../../core/services/customer/customer.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { UpdateCustomerDto } from '../../../core/dtos/updateCustomer.dto';
+import { NumberStringParam } from '../../utilities/numberstringparam';
 
 @Controller('customers')
 export class CustomersController {
@@ -56,5 +64,16 @@ export class CustomersController {
     } catch {
       throw new NotFoundException('Customer was not found');
     }
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Gets customer with specified ID' })
+  @ApiOkResponse({ description: 'Customer with specified ID returned' })
+  @ApiBadRequestResponse({
+    description: 'Failed to get customer as request was malformed',
+  })
+  @ApiNotFoundResponse({ description: 'Customer not found' })
+  async getCustomerById(@Param() params: NumberStringParam) {
+    return await this.service.getCustomerById(1); //Hard coded ID so far
   }
 }
