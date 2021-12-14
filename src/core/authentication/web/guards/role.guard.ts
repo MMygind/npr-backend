@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, mixin, Type } from '@nestjs/common';
-import RequestWithCompany from 'dist/core/authentication/requestWithCompany.interface';
+import RequestWithCompany from '../requestWithCompany.interface';
 import Role from '../role.enum';
  
 const RoleGuard = (role: Role): Type<CanActivate> => {
