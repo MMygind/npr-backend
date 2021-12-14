@@ -10,7 +10,7 @@ import { LocationEntity } from './location.entity';
 import { LocationModel } from '../../core/models/location.model';
 import { CustomerModel } from '../../core/models/customer.model';
 import { CustomerEntity } from './customer.entity';
-import Role from 'src/core/authentication/web/role.enum';
+import Role from '../../core/authentication/web/role.enum';
 
 @Entity({ name: 'Company' })
 export class CompanyEntity {
