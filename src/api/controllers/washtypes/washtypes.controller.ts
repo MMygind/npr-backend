@@ -13,6 +13,7 @@ import { WashTypeService } from '../../../core/services/washtype/washtype.servic
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -31,7 +32,27 @@ export class WashTypesController {
   @ApiOkResponse({ description: 'All wash types returned' })
   @ApiNoContentResponse({ description: 'Could not find wash types' })
   async getAllWashTypes() {
+    // should be admin only
     return await this.service.getAllWashTypes();
+  }
+
+  @Get('/byLocation/:id')
+  @ApiOperation({
+    summary: 'Get all wash types for location with specified ID',
+  })
+  @ApiOkResponse({
+    description: 'All wash types for location with specified ID returned',
+  })
+  @ApiNoContentResponse({
+    description: 'Could not find wash types for location with specified ID',
+  })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
+  async getLocationWashTypes(@Param() params: NumberStringParam) {
+    const hardcodedCompanyID = 1;
+    return await this.service.getLocationWashTypes(
+      params.id,
+      hardcodedCompanyID,
+    );
   }
 
   @Get(':id')
@@ -41,8 +62,10 @@ export class WashTypesController {
     description: 'Failed to get wash type as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Wash type not found' })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
   async getWashType(@Param() params: NumberStringParam) {
-    return await this.service.getWashType(params.id);
+    const hardcodedCompanyID = 1;
+    return await this.service.getWashType(params.id, hardcodedCompanyID);
   }
 
   @Post()
@@ -52,10 +75,14 @@ export class WashTypesController {
     description: 'Failed to create wash type as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Associated company not found' })
+  @ApiForbiddenResponse({
+    description: 'Could not create wash type with inaccessible location',
+  })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   // strips properties which do not have decorators
   async createWashType(@Body() dto: CreateWashTypeDto) {
-    return await this.service.createWashType(dto);
+    const hardcodedCompanyID = 1;
+    return await this.service.createWashType(dto, hardcodedCompanyID);
   }
 
   @Put(':id')
@@ -69,13 +96,19 @@ export class WashTypesController {
   @ApiNotFoundResponse({
     description: 'Associated company not found',
   })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
   // strips properties which do not have decorators
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async updateWashType(
     @Param() params: NumberStringParam,
     @Body() dto: UpdateWashTypeDto,
   ) {
-    return await this.service.updateWashType(params.id, dto);
+    const hardcodedCompanyID = 1;
+    return await this.service.updateWashType(
+      params.id,
+      dto,
+      hardcodedCompanyID,
+    );
   }
 
   @Delete(':id')
@@ -85,7 +118,9 @@ export class WashTypesController {
     description: 'Failed to delete wash type as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Wash type not found' })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
   async deleteWashType(@Param() params: NumberStringParam) {
-    return await this.service.deleteWashType(params.id);
+    const hardcodedCompanyID = 1;
+    return await this.service.deleteWashType(params.id, hardcodedCompanyID);
   }
 }

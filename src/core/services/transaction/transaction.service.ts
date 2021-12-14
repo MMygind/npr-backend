@@ -23,6 +23,7 @@ export class TransactionService {
     private transactionRepository: Repository<TransactionEntity>,
   ) {}
 
+  // Denne metode kan måske slettes, men beholdes lige indtil videre
   async getAllTransactions(
     options: IPaginationOptions,
   ): Promise<Pagination<TransactionModel>> {
@@ -38,7 +39,7 @@ export class TransactionService {
           'licensePlate.customer.subscription',
         ],
         order: {
-          id: 'ASC',
+          timestamp: 'DESC',
         },
         // Show soft-deleted relations
         withDeleted: true,
@@ -48,6 +49,23 @@ export class TransactionService {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
     }
     return transactions;
+  }
+
+  async getAllTransactionsByUser(
+    options: IPaginationOptions,
+    customerId: number,
+  ): Promise<Pagination<TransactionModel>> {
+    const queryBuilder = this.transactionRepository
+      .createQueryBuilder('transaction')
+      .leftJoinAndSelect('transaction.location', 'location')
+      .leftJoinAndSelect('transaction.washType', 'washType')
+      .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
+      .leftJoinAndSelect('licensePlate.customer', 'customer')
+      .orderBy('transaction.timestamp', 'DESC');
+
+    queryBuilder.where('customer.id = :customerId', { customerId });
+
+    return await paginate<TransactionModel>(queryBuilder, options);
   }
 
   async getFilteredTransactions(
@@ -65,15 +83,16 @@ export class TransactionService {
       .leftJoinAndSelect('transaction.washType', 'washType')
       .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
       .leftJoinAndSelect('licensePlate.customer', 'customer')
-      .leftJoinAndSelect('customer.subscription', 'subscription');
+      .leftJoinAndSelect('customer.subscription', 'subscription')
+      .orderBy('transaction.timestamp', 'DESC');
 
     if (queryValue) {
       queryBuilder.where(
         new Brackets((qb) => {
           qb.where('LOWER(licensePlate.licensePlate) LIKE :licensePlate', {
             licensePlate: `%${queryValue}%`,
-          }).orWhere('LOWER(customer.name) LIKE :name', {
-            name: `%${queryValue}%`,
+          }).orWhere('LOWER(customer.email) LIKE :email', {
+            email: `%${queryValue}%`,
           });
         }),
       );

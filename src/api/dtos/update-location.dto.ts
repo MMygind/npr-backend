@@ -20,10 +20,6 @@ export class UpdateLocationDto {
   @ApiProperty()
   id: number;
 
-  @IsNotEmpty()
-  @ApiProperty({ description: 'Must have positive integer property "id"' })
-  company: CompanyModel;
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
@@ -55,8 +51,4 @@ export class UpdateLocationDto {
   @IsOptional()
   @ApiProperty()
   longitude?: number;
-
-  @IsArray()
-  @ApiProperty({ description: 'Must have positive integer property "id"' })
-  washTypes: WashTypeModel[];
 }

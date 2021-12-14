@@ -40,39 +40,42 @@ export class TransactionsController {
     @Query('location') location: string,
     @Query('customerType') customerType: string,
   ): Promise<Pagination<TransactionModel>> {
-    console.log("ok")
-    if (
-      (queryValue === null &&
-        startDate === null &&
-        washType === null &&
-        location === null &&
-        customerType === null) ||
-      (queryValue === undefined &&
-        startDate === undefined &&
-        washType === undefined &&
-        location === undefined &&
-        customerType === undefined)
-    ) {
-      return await this.service.getAllTransactions({
+    return await this.service.getFilteredTransactions(
+      {
         page,
         limit,
         route: 'http://localhost:3000/transactions',
-      });
-    } else {
-      return this.service.getFilteredTransactions(
-        {
-          page,
-          limit,
-          route: 'http://localhost:3000/transactions',
-        },
-        queryValue,
-        startDate,
-        endDate,
-        washType,
-        location,
-        customerType,
-      );
-    }
+      },
+      queryValue,
+      startDate,
+      endDate,
+      washType,
+      location,
+      customerType,
+    );
+  }
+
+  @Get('/byUser')
+  @ApiOperation({
+    summary:
+      'Gets all transactions and pagination metadata for the specified user',
+    description:
+      'Gets all transactions and pagination metadata from the database for the specified user',
+  })
+  @ApiOkResponse({ description: 'All transactions returned' })
+  @ApiNoContentResponse({ description: 'Could not find transactions' })
+  async getAllTransactionsByUser(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
+  ): Promise<Pagination<TransactionModel>> {
+    return await this.service.getAllTransactionsByUser(
+      {
+        page,
+        limit,
+        route: 'http://localhost:3000/transactions/byUser',
+      },
+      1,
+    );
   }
 
   @Get(':id')

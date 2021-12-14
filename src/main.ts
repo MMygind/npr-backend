@@ -3,14 +3,15 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
   app.enableCors({
-    //origin: true,
+    origin: true,
     credentials: true,
-    origin: ['http://localhost:4200', 'your-production-domain'],
+    //origin: ['http://localhost:4200', 'your-production-domain'],
     methods: 'GET,PUT,PATCH,POST,DELETE',
     //allowedHeaders: 'Origin,X-Requested-With,Content-Type,Accept,Authorization,authorization,X-Forwarded-for',
   });
@@ -28,7 +29,8 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  
-  await app.listen(3000);
+
+  const configService: ConfigService = app.get(ConfigService);
+  await app.listen(configService.get('PORT') || 8080);
 }
 bootstrap();

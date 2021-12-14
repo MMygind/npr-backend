@@ -3,9 +3,8 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CompanyEntity } from './company.entity';
@@ -40,8 +39,10 @@ export class LocationEntity {
   @Column({ nullable: true })
   public longitude?: number;
 
-  @ManyToMany(() => WashTypeEntity)
-  @JoinTable({ name: 'LocationWashType' })
+  @OneToMany(
+    () => WashTypeEntity,
+    (washType: WashTypeEntity) => washType.location,
+  )
   public washTypes: WashTypeModel[];
 
   @DeleteDateColumn()

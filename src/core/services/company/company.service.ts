@@ -19,17 +19,34 @@ export class CompanyService {
     private companyRepository: Repository<CompanyEntity>,
   ) {}
 
-  async getCompany(id: number): Promise<CompanyModel> {
-    if (id <= 0) {
+  async getCompany(companyID: number): Promise<CompanyModel> {
+    this.validateCompanyIDIsPositive(companyID);
+    const company = await this.companyRepository.findOne(companyID);
+    this.validateCompanyExists(companyID, company);
+    return company;
+  }
+
+  async getCompanyWithLocationAndWashTypes(
+    companyID: number,
+  ): Promise<CompanyModel> {
+    this.validateCompanyIDIsPositive(companyID);
+    const company = await this.companyRepository.findOne(companyID, {
+      relations: ['locations', 'locations.washTypes'],
+    });
+    this.validateCompanyExists(companyID, company);
+    return company;
+  }
+
+  validateCompanyIDIsPositive(companyID: number) {
+    if (companyID <= 0) {
       throw new BadRequestException('Company ID must be a positive integer');
     }
-    const company = await this.companyRepository.findOne(id, {
-      relations: ['locations'],
-    });
+  }
+
+  validateCompanyExists(companyID: number, company: CompanyModel) {
     if (!company) {
-      throw new NotFoundException(`Company with ID ${id} not found`);
+      throw new NotFoundException(`Company with ID ${companyID} not found`);
     }
-    return company;
   }
 
   async getByEmail(email: string) {

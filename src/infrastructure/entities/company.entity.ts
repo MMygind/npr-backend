@@ -1,8 +1,16 @@
-import Role from '../../core/authentication/web/role.enum';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { LocationEntity } from './location.entity';
-import { LocationModel } from 'src/core/models/location.model';
+import { LocationModel } from '../../core/models/location.model';
+import { CustomerModel } from '../../core/models/customer.model';
+import { CustomerEntity } from './customer.entity';
+import Role from 'src/core/authentication/web/role.enum';
 
 @Entity({ name: 'Company' })
 export class CompanyEntity {
@@ -36,6 +44,14 @@ export class CompanyEntity {
   public role: Role
 
   @OneToMany(
-    () => LocationEntity, (location: LocationEntity) => location.company)
+    () => CustomerEntity,
+    (customer: CustomerEntity) => customer.company,
+  )
+  public customers: CustomerModel[];
+
+  @OneToMany(
+    () => LocationEntity,
+    (location: LocationEntity) => location.company,
+  )
   public locations: LocationModel[];
 }
