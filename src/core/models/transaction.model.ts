@@ -7,6 +7,7 @@ export interface TransactionModel {
   washType: WashTypeModel;
   location: LocationModel;
   licensePlate: LicensePlateModel;
+  purchasePrice: number;
   timestamp: Date;
   imageURL: string;
 }
