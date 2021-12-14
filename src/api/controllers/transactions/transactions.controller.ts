@@ -44,7 +44,7 @@ export class TransactionsController {
       {
         page,
         limit,
-        route: 'http://localhost:3000/transactions',
+        route: '/transactions',
       },
       queryValue,
       startDate,
@@ -72,7 +72,7 @@ export class TransactionsController {
       {
         page,
         limit,
-        route: 'http://localhost:3000/transactions/byUser',
+        route: '/transactions/byUser',
       },
       1,
     );
