@@ -167,7 +167,6 @@ export class TransactionService {
    * @param dto with license plate number and ID of location it was detected at
    */
   newLicensePlateDetection(dto: PlateDetectionDto) {
-    console.log('dto', dto);
     this.lastLicensePlateDetections.set(dto.locationID, dto.licensePlateNumber);
     return this.lastLicensePlateDetections.get(dto.locationID);
   }
@@ -184,7 +183,7 @@ export class TransactionService {
     await this.locationService.getLocation(locationID, customer.company.id); // throws exception if customer not allowed to access this location
     let foundLicensePlate: LicensePlateModel = null;
     customer.licensePlates.forEach((plate) => {
-      if (plate.licensePlate === this.lastLicensePlateDetections.get(locationID)) {
+      if (plate.licensePlate === this.lastLicensePlateDetections.get(Number(locationID))) {
         foundLicensePlate = plate;
       }
     });
