@@ -6,8 +6,8 @@ export interface TransactionModel {
   id?: number;
   washType: WashTypeModel;
   location: LocationModel;
-  licensePlate: LicensePlateModel;
+  licensePlate?: LicensePlateModel;
   purchasePrice: number;
   timestamp: Date;
-  imageURL: string;
+  imageURL?: string;
 }

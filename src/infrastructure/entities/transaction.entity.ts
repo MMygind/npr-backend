@@ -25,9 +25,9 @@ export class TransactionEntity {
   @JoinColumn()
   public location: LocationModel;
 
-  @ManyToOne(() => LicensePlateEntity)
+  @ManyToOne(() => LicensePlateEntity, { nullable: true })
   @JoinColumn()
-  public licensePlate: LicensePlateModel;
+  public licensePlate?: LicensePlateModel;
 
   @Column()
   public purchasePrice: number;
@@ -35,6 +35,6 @@ export class TransactionEntity {
   @Column()
   public timestamp: Date;
 
-  @Column()
-  public imageURL: string;
+  @Column({ nullable: true })
+  public imageURL?: string;
 }
