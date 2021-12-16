@@ -8,6 +8,7 @@ import { TransactionModule } from './api/transaction.module';
 import { AdministratorModule } from './api/administrator.module';
 import { LocationModule } from "./api/location.module";
 import { WashTypeModule } from "./api/washtype.module";
+import { LicensePlateModule } from './api/licenseplate.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { WashTypeModule } from "./api/washtype.module";
     AdministratorModule,
     LocationModule,
     WashTypeModule,
+    LicensePlateModule
   ],
   controllers: [],
   providers: [],

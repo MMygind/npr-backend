@@ -6,10 +6,10 @@ import {
   ApiNotFoundResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { LicensePlateModel } from '../../../core/models/licenseplate.model';
+import { CreateLicensePlateDto } from '../../dtos/create-licenseplate.dto';
 
 @Controller('licensePlates')
-export class LicensePlateController {
+export class LicensePlatesController {
   constructor(private service: LicensePlateService) {
   }
 
@@ -19,7 +19,9 @@ export class LicensePlateController {
   @ApiBadRequestResponse({description: 'Failed to create license plate'})
   @ApiNotFoundResponse({description: 'Logged in customer not found'})
 
-  async createLicensePlate(@Body() plateModel: LicensePlateModel) {
-    return await this.service.createLicensePlate(plateModel);
+  async createLicensePlate(@Body() plateDto: CreateLicensePlateDto) {
+    console.log(plateDto);
+    const customerId = 1;
+    return await this.service.createLicensePlate(plateDto, customerId);
   }
 }
