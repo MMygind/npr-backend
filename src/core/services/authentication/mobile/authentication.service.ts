@@ -17,12 +17,12 @@ export class MobileAuthenticationService {
     public async register(registrationData: CreateCustomerDto) {
         const hashedPassword = await bcrypt.hash(registrationData.password, 10);
         try {
-            const createdCompany = await this.customerService.create({
+            const createdCustomer = await this.customerService.create({
                 ...registrationData,
                 password: hashedPassword
             });
-            createdCompany.password = undefined; // not elegant way of stripping password from entity. Todo use DTO
-            return createdCompany;
+            createdCustomer.password = undefined; // not elegant way of stripping password from entity. Todo use DTO
+            return createdCustomer;
         } catch (error) {
             if (error?.code === "23505") { // unique key constraint for Postgres
                 throw new HttpException('User with that email already exists', HttpStatus.BAD_REQUEST);
@@ -34,6 +34,7 @@ export class MobileAuthenticationService {
 
     public async getAuthenticatedCustomer(email: string, plainTextPassword: string) {
         try {
+            console.log("mobile tralala");
             const customer = await this.customerService.getByEmail(email);
 
             await this.verifyPassword(plainTextPassword, customer.password);

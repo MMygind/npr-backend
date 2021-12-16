@@ -1,6 +1,6 @@
 import { Body, Req, Controller, HttpCode, Post, UseGuards, Res, Get, ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 import { MobileAuthenticationService } from 'src/core/services/authentication/mobile/authentication.service';
-import { LocalAuthenticationGuard } from 'src/core/authentication/mobile/guards/local-auth.guard';
+import { MobileLocalAuthenticationGuard } from 'src/core/authentication/mobile/guards/local-auth.guard';
 import JwtAuthenticationGuard from 'src/core/authentication/mobile/guards/jwt-auth.guard';
 import { CustomerService } from 'src/core/services/customer/customer.service';
 import RequestWithCustomer from 'src/core/authentication/mobile/request-with-customer.interface';
@@ -20,7 +20,7 @@ export class MobileAuthenticationController {
     return this.authenticationService.register(registrationData);
   }
 
-  @UseGuards(LocalAuthenticationGuard)
+  @UseGuards(MobileLocalAuthenticationGuard)
   @HttpCode(200)
   @Post('log-in')
   async logIn(@Req() request: RequestWithCustomer) {

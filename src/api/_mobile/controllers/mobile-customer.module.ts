@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { CustomersController } from './customers/mobile-customers.controller';
+import { CustomersController } from './customers/customers.controller';
 import { CustomerService } from '../../../core/services/customer/customer.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerEntity } from '../../../infrastructure/entities/customer.entity';

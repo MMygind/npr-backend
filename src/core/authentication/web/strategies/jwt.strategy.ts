@@ -7,8 +7,11 @@ import { CompanyService } from 'src/core/services/company/company.service';
 import TokenPayload from '../token-payload.interface';
  
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
+@Injectable()
+export class JwtStrategy extends PassportStrategy(
+  Strategy,
+  'web-jwt'
+) {  constructor(
     private readonly configService: ConfigService,
     private readonly companyService: CompanyService,
   ) {

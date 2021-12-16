@@ -9,7 +9,7 @@ import TokenPayload from 'src/core/authentication/web/token-payload.interface';
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(
   Strategy,
-  'jwt-refresh-token'
+  'web-jwt-refresh-token'
 ) {
   constructor(
     private readonly configService: ConfigService,

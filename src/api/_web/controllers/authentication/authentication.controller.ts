@@ -3,7 +3,7 @@ import { AuthenticationService } from 'src/core/services/authentication/web/auth
 import { CreateCompanyDto } from 'src/api/_web/dtos/create-company.dto';
 import RequestWithCompany from 'src/core/authentication/web/request-with-company.interface';
 import { CompanyService } from 'src/core/services/company/company.service';
-import { LocalAuthenticationGuard } from 'src/core/authentication/web/guards/local-auth.guard';
+import { WebLocalAuthenticationGuard } from 'src/core/authentication/web/guards/local-auth.guard';
 import JwtAuthenticationGuard from 'src/core/authentication/web/guards/jwt-auth.guard';
 import JwtRefreshGuard from 'src/core/authentication/web/guards/jwt-refresh-auth.guard';
 
@@ -20,10 +20,11 @@ export class AuthenticationController {
     return this.authenticationService.register(registrationData);
   }
 
-  @UseGuards(LocalAuthenticationGuard)
+  @UseGuards(WebLocalAuthenticationGuard)
   @HttpCode(200)
   @Post('log-in')
   async logIn(@Req() request: RequestWithCompany) {
+
     const { user } = request;
     const accessTokenCookie = this.authenticationService.getCookieWithJwtAccessToken(user.id);
     const {

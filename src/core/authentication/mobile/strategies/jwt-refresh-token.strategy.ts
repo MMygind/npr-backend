@@ -3,13 +3,13 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import TokenPayload from 'src/core/authentication/web/token-payload.interface';
+import TokenPayload from '../token-payload.interface';
 import { CustomerService } from 'src/core/services/customer/customer.service';
 
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(
   Strategy,
-  'jwt-refresh-token'
+  'mobile-jwt-refresh-token'
 ) {
   constructor(
     private readonly configService: ConfigService,

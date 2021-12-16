@@ -5,9 +5,12 @@ import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import TokenPayload from '../token-payload.interface';
 import { CustomerService } from 'src/core/services/customer/customer.service';
- 
+
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(
+  Strategy,
+  'mobile-jwt'
+) {
   constructor(
     private readonly configService: ConfigService,
     private readonly customerService: CustomerService,
@@ -19,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: configService.get('JWT_SECRET')
     });
   }
- 
+
   async validate(payload: TokenPayload) {
     return this.customerService.getById(payload.userId);
   }

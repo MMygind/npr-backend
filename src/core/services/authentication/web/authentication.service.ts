@@ -34,6 +34,7 @@ export class AuthenticationService {
 
     public async getAuthenticatedCompany(email: string, plainTextPassword: string) {
         try {
+            console.log("web tralala");
             const company = await this.companyService.getByEmail(email);
 
             await this.verifyPassword(plainTextPassword, company.password);
