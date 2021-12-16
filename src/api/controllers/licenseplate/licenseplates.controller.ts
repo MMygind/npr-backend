@@ -20,7 +20,6 @@ export class LicensePlatesController {
   @ApiNotFoundResponse({description: 'Logged in customer not found'})
 
   async createLicensePlate(@Body() plateDto: CreateLicensePlateDto) {
-    console.log(plateDto);
     const customerId = 1;
     return await this.service.createLicensePlate(plateDto, customerId);
   }

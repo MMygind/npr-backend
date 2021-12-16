@@ -20,7 +20,6 @@ export class LicensePlateService {
 
     const newPlate = this.licensePlateRepository.create(plateDto);
     await this.licensePlateRepository.save(newPlate);
-    console.log(newPlate);
     return newPlate;
   }
 
