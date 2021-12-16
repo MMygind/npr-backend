@@ -1,11 +1,11 @@
 import { Body, Req, Controller, HttpCode, Post, UseGuards, Res, Get, ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
-import { AuthenticationService } from 'src/core/services/authentication/authentication.service';
-import { CreateCompanyDto } from 'src/core/dtos/createCompany.dto';
-import RequestWithCompany from 'src/core/authentication/web/requestWithCompany.interface';
+import { AuthenticationService } from 'src/core/services/authentication/web/authentication.service';
+import { CreateCompanyDto } from 'src/api/_web/dtos/create-company.dto';
+import RequestWithCompany from 'src/core/authentication/web/request-with-company.interface';
 import { CompanyService } from 'src/core/services/company/company.service';
-import { LocalAuthenticationGuard } from 'src/core/authentication/web/guards/localAuthentication.guard';
-import JwtAuthenticationGuard from 'src/core/authentication/web/guards/jwtAuthentication.guard';
-import JwtRefreshGuard from 'src/core/authentication/web/guards/jwtRefresh.guard';
+import { LocalAuthenticationGuard } from 'src/core/authentication/web/guards/local-auth.guard';
+import JwtAuthenticationGuard from 'src/core/authentication/web/guards/jwt-auth.guard';
+import JwtRefreshGuard from 'src/core/authentication/web/guards/jwt-refresh-auth.guard';
 
 @Controller('web/authentication')
 @UseInterceptors(ClassSerializerInterceptor)

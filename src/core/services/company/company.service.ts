@@ -10,7 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { CompanyEntity } from '../../../infrastructure/entities/company.entity';
 import { Repository } from 'typeorm';
 import { CompanyModel } from '../../models/company.model';
-import CreateCompanyDto from 'src/core/dtos/createCompany.dto';
+import CreateCompanyDto from 'src/api/_web/dtos/create-company.dto';
 
 @Injectable()
 export class CompanyService {
@@ -48,14 +48,6 @@ export class CompanyService {
       throw new NotFoundException(`Company with ID ${companyID} not found`);
     }
   }
-
-  async getByEmail(email: string) {
-    const company = await this.companyRepository.findOne({ email });
-    if (company) {
-      return company;
-    }
-    throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
-  }
  
   async create(companyData: CreateCompanyDto) {
     const newCompany = await this.companyRepository.create(companyData);
@@ -71,7 +63,14 @@ export class CompanyService {
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-  // use a user service later?
+  async getByEmail(email: string) {
+    const company = await this.companyRepository.findOne({ email });
+    if (company) {
+      return company;
+    }
+    throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
+  }
+
   async setCurrentRefreshToken(refreshToken: string, userId: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.companyRepository.update(userId, {

@@ -26,14 +26,13 @@ export class CustomerEntity {
   public email: string;
 
   @Column()
-  @Exclude()
-  public passwordHash: string;
+  public password: string;
 
-  @Column()
-  @Exclude()
-  public passwordSalt: string;
+  @Column({ nullable: true })
+  @Exclude() // to be used stripped in controller by class-transformer package
+  public currentHashedRefreshToken?: string;
 
-  @Column()
+  @Column('timestamp with time zone', { nullable: false, default: () => 'CURRENT_TIMESTAMP' })
   public creationDate: Date;
 
   @Column()
@@ -45,6 +44,9 @@ export class CustomerEntity {
 
   @OneToMany(() => LicensePlateEntity, (lp: LicensePlateEntity) => lp.customer)
   public licensePlates: LicensePlateModel[];
+
+  @Column({ type: "int", nullable: true })
+  companyId: number;
 
   @ManyToOne(() => CompanyEntity, (company: CompanyEntity) => company.customers)
   @JoinColumn()
