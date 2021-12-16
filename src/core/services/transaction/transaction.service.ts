@@ -71,7 +71,7 @@ export class TransactionService {
       .leftJoinAndSelect('transaction.location', 'location')
       .leftJoinAndSelect('transaction.washType', 'washType')
       .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
-      .leftJoinAndSelect('licensePlate.customer', 'customer')
+      .leftJoinAndSelect('transaction.customer', 'customer')
       .orderBy('transaction.timestamp', 'DESC');
 
     queryBuilder.where('customer.id = :customerId', { customerId });
@@ -208,6 +208,7 @@ export class TransactionService {
       }
     }
     const transaction = this.transactionRepository.create(dto);
+    transaction.customer = customer;
     transaction.imageURL = 'tom';
     transaction.purchasePrice = washType.price;
     transaction.timestamp = new Date();

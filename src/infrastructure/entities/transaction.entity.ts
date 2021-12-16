@@ -11,6 +11,8 @@ import { LocationEntity } from './location.entity';
 import { LocationModel } from '../../core/models/location.model';
 import { LicensePlateEntity } from './licenseplate.entity';
 import { LicensePlateModel } from '../../core/models/licenseplate.model';
+import { CustomerEntity } from './customer.entity';
+import { CustomerModel } from '../../core/models/customer.model';
 
 @Entity({ name: 'Transaction' })
 export class TransactionEntity {
@@ -28,6 +30,10 @@ export class TransactionEntity {
   @ManyToOne(() => LicensePlateEntity, { nullable: true })
   @JoinColumn()
   public licensePlate?: LicensePlateModel;
+
+  @ManyToOne(() => CustomerEntity)
+  @JoinColumn()
+  public customer: CustomerModel;
 
   @Column()
   public purchasePrice: number;

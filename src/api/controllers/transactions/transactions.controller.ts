@@ -75,13 +75,14 @@ export class TransactionsController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
   ): Promise<Pagination<TransactionModel>> {
+    const hardcodedCustomerID = 1;
     return await this.service.getAllTransactionsByUser(
       {
         page,
         limit,
         route: 'http://localhost:3000/transactions/byUser',
       },
-      1,
+      hardcodedCustomerID,
     );
   }
 
