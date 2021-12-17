@@ -1,9 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { LicensePlateService } from '../../../core/services/licenseplate/licenseplate.service';
 import {
   ApiBadRequestResponse,
-  ApiCreatedResponse,
-  ApiNotFoundResponse,
+  ApiCreatedResponse, ApiNoContentResponse,
+  ApiNotFoundResponse, ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
 import { CreateLicensePlateDto } from '../../dtos/create-licenseplate.dto';
@@ -11,6 +11,14 @@ import { CreateLicensePlateDto } from '../../dtos/create-licenseplate.dto';
 @Controller('licensePlates')
 export class LicensePlatesController {
   constructor(private service: LicensePlateService) {
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get all license plates' })
+  @ApiOkResponse({ description: 'All license plates returned' })
+  @ApiNoContentResponse({ description: 'Could not find license plates' })
+  async getAllLicensePlates() {
+    return await this.service.getAllLicensePlates();
   }
 
   @Post()
