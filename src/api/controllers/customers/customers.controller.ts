@@ -1,6 +1,3 @@
-import { CustomerService } from '../../../core/services/customer/customer.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import JwtAuthenticationGuard from 'src/core/authentication/web/guards/jwtAuthentication.guard';
 import {
   BadRequestException,
   Body,
@@ -8,14 +5,25 @@ import {
   DefaultValuePipe,
   Get,
   NotFoundException,
+  Param,
   ParseIntPipe,
   Put,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { CustomerService } from '../../../core/services/customer/customer.service';
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { NumberStringParam } from '../../utilities/numberstringparam';
 import { UpdateCustomerDto } from '../../../core/dtos/updateCustomer.dto';
 import RequestWithCompany from 'src/core/authentication/web/requestWithCompany.interface';
+import JwtAuthenticationGuard from '../../../core/authentication/web/guards/jwtAuthentication.guard';
 
 @Controller('customers')
 export class CustomersController {
@@ -65,5 +73,16 @@ export class CustomersController {
     } catch {
       throw new NotFoundException('Customer was not found');
     }
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Gets customer with specified ID' })
+  @ApiOkResponse({ description: 'Customer with specified ID returned' })
+  @ApiBadRequestResponse({
+    description: 'Failed to get customer as request was malformed',
+  })
+  @ApiNotFoundResponse({ description: 'Customer not found' })
+  async getCustomerById(@Param() params: NumberStringParam) {
+    return await this.service.getCustomerById(1); //Hard coded ID so far
   }
 }

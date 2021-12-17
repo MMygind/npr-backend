@@ -99,4 +99,19 @@ export class CustomerService {
 
     return await paginate<CustomerModel>(query, options);
   }
+
+  async getCustomerById(id: number): Promise<CustomerModel> {
+    if (id <= 0) {
+      throw new BadRequestException('ID must be a positive integer');
+    }
+    const customer = await this.customerRepository.findOne(id, {
+      relations: ['subscription', 'licensePlates'],
+      withDeleted: true,
+    });
+
+    if (!customer) {
+      throw new NotFoundException(`Customer with ID ${id} not found`);
+    }
+    return customer;
+  }
 }

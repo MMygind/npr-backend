@@ -9,6 +9,8 @@ import { AdministratorModule } from './api/administrator.module';
 import { AuthenticationModule } from './api/_web/authentication.module';
 import { LocationModule } from "./api/location.module";
 import { WashTypeModule } from "./api/washtype.module";
+import { LicensePlateModule } from './api/licenseplate.module';
+import { SubscriptionModule } from './api/subscription.module';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { WashTypeModule } from "./api/washtype.module";
     AuthenticationModule,
     LocationModule,
     WashTypeModule,
+    LicensePlateModule,
+    SubscriptionModule
   ],
   controllers: [],
   providers: [],
