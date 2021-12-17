@@ -9,6 +9,8 @@ import {
   ParseIntPipe,
   Put,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { CustomerService } from '../../../core/services/customer/customer.service';
 import {
@@ -18,13 +20,17 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { UpdateCustomerDto } from '../../../core/dtos/updateCustomer.dto';
 import { NumberStringParam } from '../../utilities/numberstringparam';
+import { UpdateCustomerDto } from '../../../core/dtos/updateCustomer.dto';
+import RequestWithCompany from 'src/core/authentication/web/requestWithCompany.interface';
+import JwtAuthenticationGuard from '../../../core/authentication/web/guards/jwtAuthentication.guard';
 
 @Controller('customers')
 export class CustomersController {
-  constructor(private service: CustomerService) {}
+  constructor(private service: CustomerService) { }
 
+  //@UseGuards(RoleGuard(Role.Admin))
+  @UseGuards(JwtAuthenticationGuard)
   @Get()
   @ApiOperation({
     summary: 'Gets all customers',
@@ -33,6 +39,7 @@ export class CustomersController {
   @ApiResponse({ status: 200, description: 'Success' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   async getAllFilteredCustomers(
+    @Req() req: RequestWithCompany,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
     @Query('queryValue') queryValue: string,
@@ -40,8 +47,10 @@ export class CustomersController {
     @Query('subscription') subscription: string,
   ) {
     try {
+      const company = req.user;
+      //console.log("hej company id: " + company.id);
       return await this.service.getAllFilteredCustomers(
-        { page, limit, route: 'http://localhost:3000/customers' },
+        { page, limit, route: '/customers' },
         queryValue,
         active,
         subscription,

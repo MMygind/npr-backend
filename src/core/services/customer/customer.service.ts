@@ -22,6 +22,19 @@ export class CustomerService {
     private customerRepository: Repository<CustomerEntity>,
   ) {}
 
+  async getCustomer(customerID: number): Promise<CustomerModel> {
+    if (customerID <= 0) {
+      throw new BadRequestException('Customer ID must be a positive integer');
+    }
+    const customer = await this.customerRepository.findOne(customerID, {
+      relations: ['company', 'licensePlates'],
+    });
+    if (!customer) {
+      throw new NotFoundException(`Customer with ID ${customerID} not found`);
+    }
+    return customer;
+  }
+
   async updateCustomer(customer: UpdateCustomerDto) {
     return await this.customerRepository.save(customer);
   }
