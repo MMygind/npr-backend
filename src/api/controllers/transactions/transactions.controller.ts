@@ -47,11 +47,11 @@ export class TransactionsController {
     @Query('location') location: string,
     @Query('customerType') customerType: string,
   ): Promise<Pagination<TransactionModel>> {
-    return this.service.getFilteredTransactions(
+    return await this.service.getFilteredTransactions(
       {
         page,
         limit,
-        route: 'http://localhost:3000/transactions',
+        route: '/transactions',
       },
       queryValue,
       startDate,
@@ -80,7 +80,7 @@ export class TransactionsController {
       {
         page,
         limit,
-        route: 'http://localhost:3000/transactions/byUser',
+        route: '/transactions/byUser',
       },
       hardcodedCustomerID,
     );

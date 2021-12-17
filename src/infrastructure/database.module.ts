@@ -34,6 +34,7 @@ import { WashTypeEntity } from './entities/washtype.entity';
           TransactionEntity,
           WashTypeEntity,
         ],
+        synchronize: true,
       }),
     }),
   ],

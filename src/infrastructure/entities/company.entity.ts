@@ -10,6 +10,7 @@ import { LocationEntity } from './location.entity';
 import { LocationModel } from '../../core/models/location.model';
 import { CustomerModel } from '../../core/models/customer.model';
 import { CustomerEntity } from './customer.entity';
+import Role from '../../core/authentication/web/role.enum';
 
 @Entity({ name: 'Company' })
 export class CompanyEntity {
@@ -23,18 +24,24 @@ export class CompanyEntity {
   public name: string;
 
   @Column()
-  @Exclude()
-  public passwordHash: string;
+  public password: string;
 
-  @Column()
-  @Exclude()
-  public passwordSalt: string;
+  @Column({ nullable: true })
+  @Exclude() // to be used stripped in controller by class-transformer package
+  public currentHashedRefreshToken?: string;
 
-  @Column()
+  @Column('timestamp with time zone', { nullable: false, default: () => 'CURRENT_TIMESTAMP' })
   public creationDate: Date;
 
   @Column()
   public phoneNumber: string;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.User
+  })
+  public role: Role
 
   @OneToMany(
     () => CustomerEntity,
