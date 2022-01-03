@@ -34,11 +34,12 @@ export class MobileAuthenticationService {
 
     public async getAuthenticatedCustomer(email: string, plainTextPassword: string) {
         try {
-            console.log("mobile tralala");
+            console.log("customer login");
             const customer = await this.customerService.getByEmail(email);
 
             await this.verifyPassword(plainTextPassword, customer.password);
             customer.password = undefined;
+            console.log("User id " + customer.id + " logged on mobile frontend");
             return customer;
         } catch (error) {
             throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
@@ -55,13 +56,6 @@ export class MobileAuthenticationService {
         }
     }
 
-    /*
-    public getCookieWithJwtToken(userId: number) {
-        const payload: TokenPayload = { userId };
-        const token = this.jwtService.sign(payload);
-        return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_EXPIRATION_TIME')}`;
-    }
-    */
     public getCookieWithJwtAccessToken(userId: number) {
         const payload: TokenPayload = { userId };
         const token = this.jwtService.sign(payload, {

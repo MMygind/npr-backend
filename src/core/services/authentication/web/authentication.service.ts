@@ -34,7 +34,7 @@ export class AuthenticationService {
 
     public async getAuthenticatedCompany(email: string, plainTextPassword: string) {
         try {
-            console.log("web tralala");
+            console.log("company login");
             const company = await this.companyService.getByEmail(email);
 
             await this.verifyPassword(plainTextPassword, company.password);
@@ -55,13 +55,6 @@ export class AuthenticationService {
         }
     }
 
-    /*
-    public getCookieWithJwtToken(userId: number) {
-        const payload: TokenPayload = { userId };
-        const token = this.jwtService.sign(payload);
-        return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_EXPIRATION_TIME')}`;
-    }
-    */
     public getCookieWithJwtAccessToken(userId: number) {
         const payload: TokenPayload = { userId };
         const token = this.jwtService.sign(payload, {
