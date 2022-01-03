@@ -10,9 +10,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LocationEntity } from '../../../infrastructure/entities/location.entity';
 import { Repository } from 'typeorm';
 import { LocationModel } from '../../models/location.model';
-import { CreateLocationDto } from '../../../api/dtos/create-location.dto';
+import { CreateLocationDto } from '../../../api/_web/dtos/create-location.dto';
 import { CompanyService } from '../company/company.service';
-import { UpdateLocationDto } from '../../../api/dtos/update-location.dto';
+import { UpdateLocationDto } from '../../../api/_web/dtos/update-location.dto';
 
 @Injectable()
 export class LocationService {

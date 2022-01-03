@@ -7,20 +7,18 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
-import { Brackets, Like, Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { TransactionModel } from '../../models/transaction.model';
 import {
   IPaginationOptions,
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { from, map, Observable } from 'rxjs';
 import { CustomerService } from "../customer/customer.service";
 import { LicensePlateModel } from "../../models/licenseplate.model";
 import { PlateDetectionDto } from 'src/api/dtos/plate-detection.dto';
 import { LocationService } from "../location/location.service";
 import { CreateTransactionDto } from "../../../api/dtos/create-transaction.dto";
-import { CustomerModule } from "../../../api/customer.module";
 
 @Injectable()
 export class TransactionService {
@@ -33,34 +31,6 @@ export class TransactionService {
     private customerService: CustomerService,
     private locationService: LocationService,
   ) {}
-
-  // Denne metode kan måske slettes, men beholdes lige indtil videre
-  async getAllTransactions(
-    options: IPaginationOptions,
-  ): Promise<Pagination<TransactionModel>> {
-    const transactions = await paginate<TransactionModel>(
-      this.transactionRepository,
-      options,
-      {
-        relations: [
-          'washType',
-          'location',
-          'licensePlate',
-          'licensePlate.customer',
-          'licensePlate.customer.subscription',
-        ],
-        order: {
-          timestamp: 'DESC',
-        },
-        // Show soft-deleted relations
-        withDeleted: true,
-      },
-    );
-    if (transactions.items.length == 0) {
-      throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
-    }
-    return transactions;
-  }
 
   async getAllTransactionsByUser(
     options: IPaginationOptions,

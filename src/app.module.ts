@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common';
-import { CompanyModule } from './api/company.module';
+import { CompanyModule } from './api/_web/controllers/company.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { DatabaseModule } from './infrastructure/database.module';
-import { CustomerModule } from './api/customer.module';
-import { TransactionModule } from './api/transaction.module';
-import { AdministratorModule } from './api/administrator.module';
-import { AuthenticationModule } from './api/_web/authentication.module';
-import { LocationModule } from "./api/location.module";
-import { WashTypeModule } from "./api/washtype.module";
+import { TransactionModule } from './api/_web/controllers/transaction.module';
+import { AdministratorModule } from './api/_web/controllers/administrator.module';
+import { LocationModule } from "./api/_web/controllers/location.module";
+import { WashTypeModule } from "./api/_web/controllers/washtype.module";
+import { AuthenticationModule } from './api/_web/controllers/authentication.module';
+import { CustomerModule } from './api/_web/controllers/customer.module';
+import { MobileCustomerModule } from './api/_mobile/controllers/mobile-customer.module';
+import { MobileAuthenticationModule } from './api/_mobile/controllers/mobile-authentication.module';
 import { LicensePlateModule } from './api/licenseplate.module';
 import { SubscriptionModule } from './api/subscription.module';
 
@@ -32,12 +34,14 @@ import { SubscriptionModule } from './api/subscription.module';
     }),
     DatabaseModule,
     CustomerModule,
+    AuthenticationModule,
     TransactionModule,
     CompanyModule,
     AdministratorModule,
-    AuthenticationModule,
     LocationModule,
     WashTypeModule,
+    MobileCustomerModule,
+    MobileAuthenticationModule,
     LicensePlateModule,
     SubscriptionModule
   ],
