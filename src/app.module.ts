@@ -11,6 +11,8 @@ import { AuthenticationModule } from './api/_web/controllers/authentication.modu
 import { CustomerModule } from './api/_web/controllers/customer.module';
 import { MobileCustomerModule } from './api/_mobile/controllers/mobile-customer.module';
 import { MobileAuthenticationModule } from './api/_mobile/controllers/mobile-authentication.module';
+import { LicensePlateModule } from './api/licenseplate.module';
+import { SubscriptionModule } from './api/subscription.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { MobileAuthenticationModule } from './api/_mobile/controllers/mobile-aut
     WashTypeModule,
     MobileCustomerModule,
     MobileAuthenticationModule,
+    LicensePlateModule,
+    SubscriptionModule
   ],
   controllers: [],
   providers: [],

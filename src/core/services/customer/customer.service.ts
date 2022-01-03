@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable, ParseEnumPipe } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerEntity } from '../../../infrastructure/entities/customer.entity';
 import { Brackets, Repository } from 'typeorm';
@@ -13,7 +19,7 @@ export class CustomerService {
   constructor(
     @InjectRepository(CustomerEntity)
     private customerRepository: Repository<CustomerEntity>,
-  ) {}
+  ) { }
 
   async getById(id: number) {
     const customer = await this.customerRepository.findOne({ id });
@@ -23,13 +29,25 @@ export class CustomerService {
     throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
   }
 
-
   async getByEmail(email: string) {
     const customer = await this.customerRepository.findOne({ email });
     if (customer) {
       return customer;
     }
     throw new HttpException('User with this email does not exist', HttpStatus.NOT_FOUND);
+  }
+
+  async getCustomer(customerID: number): Promise<CustomerModel> {
+    if (customerID <= 0) {
+      throw new BadRequestException('Customer ID must be a positive integer');
+    }
+    const customer = await this.customerRepository.findOne(customerID, {
+      relations: ['company', 'licensePlates'],
+    });
+    if (!customer) {
+      throw new NotFoundException(`Customer with ID ${customerID} not found`);
+    }
+    return customer;
   }
 
   async updateCustomer(customer: UpdateCustomerDto) {
@@ -112,12 +130,12 @@ export class CustomerService {
 
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
     const user = await this.getById(userId);
- 
+
     const isRefreshTokenMatching = await bcrypt.compare(
       refreshToken,
       user.currentHashedRefreshToken
     );
- 
+
     if (isRefreshTokenMatching) {
       return user;
     }
@@ -127,5 +145,20 @@ export class CustomerService {
     return this.customerRepository.update(userId, {
       currentHashedRefreshToken: null
     });
+  }
+
+  async getCustomerById(id: number): Promise<CustomerModel> {
+    if (id <= 0) {
+      throw new BadRequestException('ID must be a positive integer');
+    }
+    const customer = await this.customerRepository.findOne(id, {
+      relations: ['subscription', 'licensePlates'],
+      withDeleted: true,
+    });
+
+    if (!customer) {
+      throw new NotFoundException(`Customer with ID ${id} not found`);
+    }
+    return customer;
   }
 }

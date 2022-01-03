@@ -1,10 +1,10 @@
 import {
-  BadRequestException,
+  BadRequestException, ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+  NotFoundException
+} from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
 import { Brackets, Like, Repository } from 'typeorm';
@@ -15,12 +15,23 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { from, map, Observable } from 'rxjs';
+import { CustomerService } from "../customer/customer.service";
+import { LicensePlateModel } from "../../models/licenseplate.model";
+import { PlateDetectionDto } from 'src/api/dtos/plate-detection.dto';
+import { LocationService } from "../location/location.service";
+import { CreateTransactionDto } from "../../../api/dtos/create-transaction.dto";
+import { CustomerModule } from "../../../api/customer.module";
 
 @Injectable()
 export class TransactionService {
+
+  lastLicensePlateDetections: Map<number, string> = new Map();
+
   constructor(
     @InjectRepository(TransactionEntity)
     private transactionRepository: Repository<TransactionEntity>,
+    private customerService: CustomerService,
+    private locationService: LocationService,
   ) {}
 
   // Denne metode kan måske slettes, men beholdes lige indtil videre
@@ -60,7 +71,7 @@ export class TransactionService {
       .leftJoinAndSelect('transaction.location', 'location')
       .leftJoinAndSelect('transaction.washType', 'washType')
       .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
-      .leftJoinAndSelect('licensePlate.customer', 'customer')
+      .leftJoinAndSelect('transaction.customer', 'customer')
       .orderBy('transaction.timestamp', 'DESC');
 
     queryBuilder.where('customer.id = :customerId', { customerId });
@@ -128,7 +139,7 @@ export class TransactionService {
   }
 
   async getTransaction(id: number): Promise<TransactionModel> {
-    if (id >= 0) {
+    if (id <= 0) {
       throw new BadRequestException(
         'Transaction ID must be a positive integer',
       );
@@ -149,5 +160,59 @@ export class TransactionService {
       throw new NotFoundException(`Transaction with ID ${id} not found`);
     }
     return transaction;
+  }
+
+  /**
+   * Method for IoT device to register last detected license plate at specific location
+   * @param dto with license plate number and ID of location it was detected at
+   */
+  newLicensePlateDetection(dto: PlateDetectionDto) {
+    this.lastLicensePlateDetections.set(dto.locationID, dto.licensePlateNumber);
+    return this.lastLicensePlateDetections.get(dto.locationID);
+  }
+
+  /**
+   * Checks to see if last detected license plate matches
+   * any of those registered to the customer, and if so, returns it
+   * otherwise returns null to indicate no match
+   * @param customerID
+   * @return licensePlate matching last detection, or null
+   */
+  async getMatchingLicensePlateAtLocation(locationID: number, customerID: number): Promise<LicensePlateModel> {
+    const customer = await this.customerService.getCustomer(customerID);
+    await this.locationService.getLocation(locationID, customer.company.id); // throws exception if customer not allowed to access this location
+    let foundLicensePlate: LicensePlateModel = null;
+    customer.licensePlates.forEach((plate) => {
+      if (plate.licensePlate === this.lastLicensePlateDetections.get(Number(locationID))) {
+        foundLicensePlate = plate;
+      }
+    });
+    return foundLicensePlate;
+  }
+
+  async createTransaction(dto: CreateTransactionDto, customerID: number): Promise<TransactionModel> {
+    const customer = await this.customerService.getCustomer(customerID);
+    const location = await this.locationService.getLocation(dto.location.id, customer.company.id); // throws exception if customer not allowed to access this location
+    const washType = location.washTypes.find((washtype) => washtype.id === dto.washType.id);
+    if (!washType) {
+      throw new NotFoundException(`No washtype with ID ${dto.washType.id} on location with ID ${location.id}`);
+    }
+    if (dto.licensePlate) {
+      const plate = customer.licensePlates.find((plate) => plate.id === dto.licensePlate.id);
+      if (!plate) {
+        throw new NotFoundException(`No license plate with ID ${dto.licensePlate.id} registered on customer`);
+      }
+      const foundPlate = await this.getMatchingLicensePlateAtLocation(dto.location.id, customerID);
+      if (foundPlate == null || dto.licensePlate.id !== foundPlate.id) {
+        throw new BadRequestException(`Transaction license plate does not match last detected license plate at ${location.name}`);
+      }
+    }
+    const transaction = this.transactionRepository.create(dto);
+    transaction.customer = customer;
+    transaction.imageURL = 'tom';
+    transaction.purchasePrice = washType.price;
+    transaction.timestamp = new Date();
+    await this.transactionRepository.save(transaction);
+    return await this.getTransaction(transaction.id);
   }
 }

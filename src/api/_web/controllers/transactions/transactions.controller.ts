@@ -1,6 +1,7 @@
 import { TransactionService } from '../../../../core/services/transaction/transaction.service';
 import {
   ApiBadRequestResponse,
+  ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -8,15 +9,21 @@ import {
 } from '@nestjs/swagger';
 import { NumberStringParam } from '../../../utilities/numberstringparam';
 import {
+  Body,
   Controller,
   DefaultValuePipe,
   Get,
   Param,
   ParseIntPipe,
+  Post,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { TransactionModel } from '../../../../core/models/transaction.model';
+import { TransactionModel } from 'src/core/models/transaction.model';
+import { CreateTransactionDto } from 'src/api/dtos/create-transaction.dto';
+import { PlateDetectionDto } from 'src/api/dtos/plate-detection.dto';
 
 @Controller('transactions')
 export class TransactionsController {
@@ -68,13 +75,14 @@ export class TransactionsController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit = 10,
   ): Promise<Pagination<TransactionModel>> {
+    const hardcodedCustomerID = 1;
     return await this.service.getAllTransactionsByUser(
       {
         page,
         limit,
         route: '/transactions/byUser',
       },
-      1,
+      hardcodedCustomerID,
     );
   }
 
@@ -87,5 +95,53 @@ export class TransactionsController {
   @ApiNotFoundResponse({ description: 'Transaction not found' })
   async getTransactionById(@Param() params: NumberStringParam) {
     return await this.service.getTransaction(params.id);
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Create new transaction' })
+  @ApiOkResponse({ description: 'Transaction created and returned' })
+  @ApiBadRequestResponse({
+    description: 'Failed to create transaction as request was malformed',
+  })
+  @ApiNotFoundResponse({ description: 'Associated location or washtype not found' })
+  @ApiForbiddenResponse({
+    description: 'Could not create transaction with inaccessible location',
+  })
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  async createTransaction(@Body() dto: CreateTransactionDto) {
+    const hardcodedCustomerID = 1;
+    return await this.service.createTransaction(dto, hardcodedCustomerID);
+  }
+
+  @Post('/plateDetection')
+  @ApiOperation({
+    description: 'Update last detected license plate for location',
+  })
+  newLicensePlateDetection(@Body() dto: PlateDetectionDto) {
+    return this.service.newLicensePlateDetection(dto);
+  }
+
+  @Get('/checkPlate/:id')
+  @ApiOperation({
+    summary:
+      'Check if last detected license plate at location ID matches any of customers',
+  })
+  @ApiOkResponse({
+    description:
+      'Matching detected license plate returned - null if not matching',
+  })
+  @ApiBadRequestResponse({
+    description: 'Failed as request was malformed',
+  })
+  @ApiNotFoundResponse({ description: 'Location with ID not found' })
+  @ApiForbiddenResponse({
+    description: 'Could not create transaction with inaccessible location',
+  })
+  async getMatchingLicensePlateAtLocation(@Param() params: NumberStringParam) {
+    const hardcodedCustomerID = 1;
+    return await this.service.getMatchingLicensePlateAtLocation(
+      params.id,
+      hardcodedCustomerID,
+    );
   }
 }
