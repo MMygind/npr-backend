@@ -26,6 +26,7 @@ export class CustomerEntity {
   public email: string;
 
   @Column()
+  @Exclude() // to be used stripped in controller by class-transformer package
   public password: string;
 
   @Column({ nullable: true })
