@@ -10,7 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { CompanyEntity } from '../../../infrastructure/entities/company.entity';
 import { Repository } from 'typeorm';
 import { CompanyModel } from '../../models/company.model';
-import CreateCompanyDto from 'src/api/_web/dtos/create-company.dto';
+import CreateCompanyDto from 'src/api/dtos/create-company.dto';
 
 @Injectable()
 export class CompanyService {

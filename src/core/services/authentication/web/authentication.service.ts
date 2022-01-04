@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CompanyService } from '../../company/company.service';
 import * as bcrypt from 'bcrypt';
-import CreateCompanyDto from 'src/api/_web/dtos/create-company.dto';
+import CreateCompanyDto from 'src/api/dtos/create-company.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import TokenPayload from 'src/core/authentication/web/token-payload.interface';

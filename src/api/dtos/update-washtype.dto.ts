@@ -6,7 +6,7 @@ import {
   IsString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { CompanyModel } from '../../../core/models/company.model';
+import { CompanyModel } from '../../core/models/company.model';
 
 export class UpdateWashTypeDto {
   @IsInt()

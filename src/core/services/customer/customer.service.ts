@@ -10,9 +10,9 @@ import { CustomerEntity } from '../../../infrastructure/entities/customer.entity
 import { Brackets, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CustomerModel } from '../../models/customer.model';
-import { UpdateCustomerDto } from '../../../api/_web/dtos/update-customer.dto';
+import { UpdateCustomerDto } from '../../../api/dtos/update-customer.dto';
 import { IPaginationOptions, paginate, Pagination } from "nestjs-typeorm-paginate";
-import { CreateCustomerDto } from 'src/api/_mobile/dtos/create-customer.dto';
+import { CreateCustomerDto } from 'src/api/dtos/create-customer.dto';
 
 @Injectable()
 export class CustomerService {
@@ -59,6 +59,7 @@ export class CustomerService {
     queryValue: string,
     active: boolean,
     subscription: string,
+    id: number,
   ): Promise<Pagination<CustomerModel>> {
     const query = this.customerRepository
       .createQueryBuilder('customer')

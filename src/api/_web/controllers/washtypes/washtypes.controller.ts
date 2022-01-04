@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Post,
-  Put,
+  Put, Req, UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -20,22 +20,16 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 import { NumberStringParam } from '../../../utilities/numberstringparam';
-import { CreateWashTypeDto } from '../../dtos/create-washtype.dto';
-import { UpdateWashTypeDto } from '../../dtos/update-washtype.dto';
+import { CreateWashTypeDto } from '../../../dtos/create-washtype.dto';
+import { UpdateWashTypeDto } from '../../../dtos/update-washtype.dto';
+import JwtAuthenticationGuard from '../../../../core/authentication/web/guards/jwt-auth.guard';
+import RequestWithCompany from '../../../../core/authentication/web/request-with-company.interface';
 
 @Controller('washtypes')
 export class WashTypesController {
   constructor(private service: WashTypeService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Get all wash types' })
-  @ApiOkResponse({ description: 'All wash types returned' })
-  @ApiNoContentResponse({ description: 'Could not find wash types' })
-  async getAllWashTypes() {
-    // should be admin only
-    return await this.service.getAllWashTypes();
-  }
-
+  @UseGuards(JwtAuthenticationGuard)
   @Get('/byLocation/:id')
   @ApiOperation({
     summary: 'Get all wash types for location with specified ID',
@@ -47,15 +41,15 @@ export class WashTypesController {
     description: 'Could not find wash types for location with specified ID',
   })
   @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
-  async getLocationWashTypes(@Param() params: NumberStringParam) {
-    const hardcodedCompanyID = 1;
+  async getLocationWashTypes(@Param() params: NumberStringParam, @Req() request: RequestWithCompany) {
+    const company = request.user;
     return await this.service.getLocationWashTypes(
       params.id,
-      hardcodedCompanyID,
+      company.id,
     );
   }
 
-  @Get(':id')
+  /*@Get(':id')
   @ApiOperation({ summary: 'Get wash type with specified ID' })
   @ApiOkResponse({ description: 'Wash type with specified ID returned' })
   @ApiBadRequestResponse({
@@ -66,8 +60,9 @@ export class WashTypesController {
   async getWashType(@Param() params: NumberStringParam) {
     const hardcodedCompanyID = 1;
     return await this.service.getWashType(params.id, hardcodedCompanyID);
-  }
+  }*/
 
+  @UseGuards(JwtAuthenticationGuard)
   @Post()
   @ApiOperation({ summary: 'Create new wash type' })
   @ApiCreatedResponse({ description: 'Wash type created and returned' })
@@ -80,11 +75,12 @@ export class WashTypesController {
   })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   // strips properties which do not have decorators
-  async createWashType(@Body() dto: CreateWashTypeDto) {
-    const hardcodedCompanyID = 1;
-    return await this.service.createWashType(dto, hardcodedCompanyID);
+  async createWashType(@Body() dto: CreateWashTypeDto, @Req() request: RequestWithCompany) {
+    const company = request.user;
+    return await this.service.createWashType(dto, company.id);
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Put(':id')
   @ApiOperation({ summary: 'Updates wash type with specified ID' })
   @ApiOkResponse({
@@ -102,15 +98,17 @@ export class WashTypesController {
   async updateWashType(
     @Param() params: NumberStringParam,
     @Body() dto: UpdateWashTypeDto,
+    @Req() request: RequestWithCompany
   ) {
-    const hardcodedCompanyID = 1;
+    const company = request.user;
     return await this.service.updateWashType(
       params.id,
       dto,
-      hardcodedCompanyID,
+      company.id,
     );
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Deletes wash type with specified ID' })
   @ApiOkResponse({ description: 'Wash type with specified ID deleted' })
@@ -119,8 +117,8 @@ export class WashTypesController {
   })
   @ApiNotFoundResponse({ description: 'Wash type not found' })
   @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
-  async deleteWashType(@Param() params: NumberStringParam) {
-    const hardcodedCompanyID = 1;
-    return await this.service.deleteWashType(params.id, hardcodedCompanyID);
+  async deleteWashType(@Param() params: NumberStringParam, @Req() request: RequestWithCompany) {
+    const company = request.user;
+    return await this.service.deleteWashType(params.id, company.id);
   }
 }

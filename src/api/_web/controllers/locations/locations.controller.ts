@@ -5,14 +5,14 @@ import {
   Get,
   Param,
   Post,
-  Put,
+  Put, Req, UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { LocationService } from '../../../../core/services/location/location.service';
 import { NumberStringParam } from '../../../utilities/numberstringparam';
 import { LocationModel } from '../../../../core/models/location.model';
-import { CreateLocationDto } from '../../../_web/dtos/create-location.dto';
+import { CreateLocationDto } from '../../../dtos/create-location.dto';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -22,21 +22,15 @@ import {
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { UpdateLocationDto } from '../../../_web/dtos/update-location.dto';
+import { UpdateLocationDto } from '../../../dtos/update-location.dto';
+import JwtAuthenticationGuard from '../../../../core/authentication/web/guards/jwt-auth.guard';
+import RequestWithCompany from '../../../../core/authentication/web/request-with-company.interface';
 
 @Controller('locations')
 export class LocationsController {
   constructor(private service: LocationService) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Get all locations' })
-  @ApiOkResponse({ description: 'All locations returned' })
-  @ApiNoContentResponse({ description: 'Could not find locations' })
-  async getAllLocations() {
-    // should be admin only
-    return await this.service.getAllLocations();
-  }
-
+  @UseGuards(JwtAuthenticationGuard)
   @Get('/thisCompany')
   @ApiOperation({ summary: 'Get locations for authenticated company user' })
   @ApiOkResponse({
@@ -45,12 +39,12 @@ export class LocationsController {
   @ApiNoContentResponse({
     description: 'Could not find locations for authenticated company user',
   })
-  async getCompanyLocations() {
-    const hardcodedCompanyID = 1;
-    return await this.service.getCompanyLocations(hardcodedCompanyID);
+  async getCompanyLocations(@Req() request: RequestWithCompany) {
+    const company = request.user;
+    return await this.service.getCompanyLocations(company.id);
   }
 
-  @Get(':id')
+  /*@Get(':id')
   @ApiOperation({ summary: 'Get location with specified ID' })
   @ApiOkResponse({ description: 'Location with specified ID returned' })
   @ApiBadRequestResponse({
@@ -61,8 +55,9 @@ export class LocationsController {
   async getLocation(@Param() params: NumberStringParam) {
     const hardcodedCompanyID = 1;
     return await this.service.getLocation(params.id, hardcodedCompanyID);
-  }
+  }*/
 
+  @UseGuards(JwtAuthenticationGuard)
   @Post()
   @ApiOperation({ summary: 'Create new location' })
   @ApiCreatedResponse({ description: 'Location created and returned' })
@@ -75,11 +70,12 @@ export class LocationsController {
   })
   // strips properties which do not have decorators
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  async createLocation(@Body() dto: CreateLocationDto) {
-    const hardcodedCompanyID = 1;
-    return await this.service.createLocation(dto, hardcodedCompanyID);
+  async createLocation(@Body() dto: CreateLocationDto, @Req() request: RequestWithCompany) {
+    const company = request.user;
+    return await this.service.createLocation(dto, company.id);
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Put(':id')
   @ApiOperation({ summary: 'Updates location with specified ID' })
   @ApiOkResponse({
@@ -97,15 +93,17 @@ export class LocationsController {
   async updateLocation(
     @Param() params: NumberStringParam,
     @Body() dto: UpdateLocationDto,
+    @Req() request: RequestWithCompany
   ) {
-    const hardcodedCompanyID = 1;
+    const company = request.user;
     return await this.service.updateLocation(
       params.id,
       dto,
-      hardcodedCompanyID,
+      company.id,
     );
   }
 
+  @UseGuards(JwtAuthenticationGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Deletes location with specified ID' })
   @ApiOkResponse({ description: 'Location with specified ID deleted' })
@@ -114,8 +112,8 @@ export class LocationsController {
   })
   @ApiNotFoundResponse({ description: 'Location not found' })
   @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
-  async deleteLocation(@Param() params: NumberStringParam) {
-    const hardcodedCompanyID = 1;
-    return await this.service.deleteLocation(params.id, hardcodedCompanyID);
+  async deleteLocation(@Param() params: NumberStringParam, @Req() request: RequestWithCompany) {
+    const company = request.user;
+    return await this.service.deleteLocation(params.id, company.id);
   }
 }
