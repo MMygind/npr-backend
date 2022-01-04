@@ -3,7 +3,7 @@ import { SubscriptionService } from '../../../../core/services/subscription/subs
 import { ApiNotFoundResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import JwtAuthenticationGuard from '../../../../core/authentication/mobile/guards/jwt-auth.guard';
 
-@Controller('subscriptions')
+@Controller('mobile/subscriptions')
 export class SubscriptionsController {
   constructor(private service: SubscriptionService) {
   }

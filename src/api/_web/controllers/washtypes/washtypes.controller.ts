@@ -25,7 +25,7 @@ import { UpdateWashTypeDto } from '../../../dtos/update-washtype.dto';
 import JwtAuthenticationGuard from '../../../../core/authentication/web/guards/jwt-auth.guard';
 import RequestWithCompany from '../../../../core/authentication/web/request-with-company.interface';
 
-@Controller('washtypes')
+@Controller('web/washtypes')
 export class WashTypesController {
   constructor(private service: WashTypeService) {}
 

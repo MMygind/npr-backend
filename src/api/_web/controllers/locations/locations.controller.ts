@@ -26,7 +26,7 @@ import { UpdateLocationDto } from '../../../dtos/update-location.dto';
 import JwtAuthenticationGuard from '../../../../core/authentication/web/guards/jwt-auth.guard';
 import RequestWithCompany from '../../../../core/authentication/web/request-with-company.interface';
 
-@Controller('locations')
+@Controller('web/locations')
 export class LocationsController {
   constructor(private service: LocationService) {}
 
