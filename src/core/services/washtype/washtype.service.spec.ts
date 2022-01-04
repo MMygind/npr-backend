@@ -141,7 +141,7 @@ describe('WashTypeService', () => {
   // region getAllWashTypes tests
   describe('getAllWashTypes', () => {
     it('should return all wash types', async () => {
-      expect(await washTypeService.getAllWashTypes()).toEqual(washTypes);
+      expect(await washTypeService.getAllCompanyWashTypes(1)).toEqual(washTypes);
 
       expect(find).toHaveBeenCalledTimes(1);
     });
@@ -149,7 +149,7 @@ describe('WashTypeService', () => {
     it('should throw HttpException if array is empty', async () => {
       // find.mockReturnValue(Promise.resolve([]));
       washTypes = [];
-      await expect(washTypeService.getAllWashTypes()).rejects.toEqual(
+      await expect(washTypeService.getAllCompanyWashTypes(1)).rejects.toEqual(
         new HttpException('No elements found', HttpStatus.NO_CONTENT),
       );
 
