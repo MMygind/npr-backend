@@ -34,14 +34,14 @@ export class CustomersController {
   }
 
   @UseGuards(JwtAuthenticationGuard)
-  @Get(':id')
+  @Get()
   @ApiOperation({ summary: 'Gets customer with specified ID' })
   @ApiOkResponse({ description: 'Customer with specified ID returned' })
   @ApiBadRequestResponse({
     description: 'Failed to get customer as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Customer not found' })
-  async getLoggedInCustomer(@Param() params: NumberStringParam, @Req() request: RequestWithCustomer) {
+  async getLoggedInCustomer(@Req() request: RequestWithCustomer) {
     const customer = request.user;
     return await this.service.getCustomerById(customer.id);
   }

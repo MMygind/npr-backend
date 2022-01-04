@@ -23,7 +23,6 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
-import { NumberStringParam } from 'src/api/utilities/numberstringparam';
 
 @Controller('web/customers')
 export class CustomersController {
