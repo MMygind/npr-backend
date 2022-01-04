@@ -22,8 +22,16 @@ export class WashTypeService {
     @InjectRepository(WashTypeEntity)
     private washTypeRepository: Repository<WashTypeEntity>,
     private locationService: LocationService,
-    private companyService: CompanyService,
+    private companyService: CompanyService
   ) {}
+
+  async getAllWashTypes(): Promise<WashTypeModel[]> {
+    const washTypes = await this.washTypeRepository.find();
+    if (washTypes == undefined || washTypes.length == 0) {
+      throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
+    }
+    return washTypes;
+  }
 
   async getAllCompanyWashTypes(companyId: number): Promise<WashTypeModel[]> {
     await this.companyService.getCompany(companyId)
