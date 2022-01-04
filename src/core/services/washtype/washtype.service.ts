@@ -11,8 +11,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WashTypeEntity } from '../../../infrastructure/entities/washtype.entity';
 import { Repository } from 'typeorm';
 import { WashTypeModel } from '../../models/washtype.model';
-import { CreateWashTypeDto } from '../../../api/_web/dtos/create-washtype.dto';
-import { UpdateWashTypeDto } from '../../../api/_web/dtos/update-washtype.dto';
+import { CreateWashTypeDto } from '../../../api/dtos/create-washtype.dto';
+import { UpdateWashTypeDto } from '../../../api/dtos/update-washtype.dto';
 import { LocationService } from '../location/location.service';
 
 @Injectable()

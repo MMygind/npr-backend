@@ -1,4 +1,4 @@
-import { CompanyModel } from '../../../core/models/company.model';
+import { CompanyModel } from '../../core/models/company.model';
 import {
   IsNotEmpty,
   IsNumber,

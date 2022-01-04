@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
@@ -7,12 +7,15 @@ import {
 } from '@nestjs/swagger';
 import { CompanyService } from 'src/core/services/company/company.service';
 import { NumberStringParam } from '../../../utilities/numberstringparam';
+import JwtAuthenticationGuard from '../../../../core/authentication/web/guards/jwt-auth.guard';
+import RequestWithCompany from '../../../../core/authentication/web/request-with-company.interface';
 
 @Controller('companies')
 export class CompaniesController {
   constructor(private service: CompanyService) {}
 
   @Get()
+  @UseGuards(JwtAuthenticationGuard)
   @ApiOperation({ summary: 'Get company with specified ID' })
   @ApiOkResponse({
     description: 'Company with specified ID returned',
@@ -26,6 +29,7 @@ export class CompaniesController {
   }
 
   @Get('/thisCompany')
+  @UseGuards(JwtAuthenticationGuard)
   @ApiOperation({ summary: 'Get company for authenticated company user' })
   @ApiOkResponse({
     description: 'Company for authenticated company user returned',
@@ -34,10 +38,10 @@ export class CompaniesController {
     description: 'Failed to get company as request was malformed',
   })
   @ApiNotFoundResponse({ description: 'Company not found' })
-  async getThisCompany() {
-    const hardcodedCompanyID = 1;
-    return await this.service.getCompanyWithLocationAndWashTypes(
-      hardcodedCompanyID,
-    );
+  async getThisCompany(
+    @Req() request: RequestWithCompany
+  ) {
+    const company = request.user;
+    return await this.service.getCompanyWithLocationAndWashTypes(company.id);
   }
 }

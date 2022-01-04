@@ -1,5 +1,5 @@
-import { CompanyModel } from '../../../core/models/company.model';
-import { WashTypeModel } from '../../../core/models/washtype.model';
+import { CompanyModel } from '../../core/models/company.model';
+import { WashTypeModel } from '../../core/models/washtype.model';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,

@@ -1,6 +1,6 @@
 import { Body, Req, Controller, HttpCode, Post, UseGuards, Res, Get, ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 import { AuthenticationService } from 'src/core/services/authentication/web/authentication.service';
-import { CreateCompanyDto } from 'src/api/_web/dtos/create-company.dto';
+import { CreateCompanyDto } from 'src/api/dtos/create-company.dto';
 import RequestWithCompany from 'src/core/authentication/web/request-with-company.interface';
 import { CompanyService } from 'src/core/services/company/company.service';
 import { WebLocalAuthenticationGuard } from 'src/core/authentication/web/guards/local-auth.guard';

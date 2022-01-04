@@ -8,7 +8,7 @@ import { CompanyModule } from './company.module';
 import { LocalStrategy } from 'src/core/authentication/web/strategies/local.strategy';
 import { JwtStrategy } from 'src/core/authentication/web/strategies/jwt.strategy';
 import { JwtRefreshTokenStrategy } from 'src/core/authentication/web/strategies/jwt-refresh-token.strategy';
- 
+
 @Module({
   imports: [
     CompanyModule,
@@ -24,7 +24,7 @@ import { JwtRefreshTokenStrategy } from 'src/core/authentication/web/strategies/
         },
       }),
     }),
-    ],
+  ],
   providers: [AuthenticationService, LocalStrategy, JwtStrategy, JwtRefreshTokenStrategy],
   controllers: [AuthenticationController],
   exports: [AuthenticationService]

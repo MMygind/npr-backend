@@ -3,7 +3,7 @@ import { CustomerService } from '../../customer/customer.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { CreateCustomerDto } from 'src/api/_mobile/dtos/create-customer.dto';
+import { CreateCustomerDto } from 'src/api/dtos/create-customer.dto';
 import TokenPayload from 'src/core/authentication/mobile/token-payload.interface';
 
 @Injectable()

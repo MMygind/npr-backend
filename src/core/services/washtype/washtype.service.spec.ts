@@ -6,7 +6,7 @@ import { LocationService } from '../location/location.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { WashTypeEntity } from '../../../infrastructure/entities/washtype.entity';
 import { CompanyModel } from '../../models/company.model';
-import { CreateWashTypeDto } from '../../../api/_web/dtos/create-washtype.dto';
+import { CreateWashTypeDto } from '../../../api/dtos/create-washtype.dto';
 import {
   BadRequestException,
   ForbiddenException,
@@ -14,11 +14,11 @@ import {
   HttpStatus,
   NotFoundException,
 } from '@nestjs/common';
-import { UpdateWashTypeDto } from '../../../api/_web/dtos/update-washtype.dto';
+import { UpdateWashTypeDto } from '../../../api/dtos/update-washtype.dto';
 import { UpdateResult } from 'typeorm';
 
 // npm run test to run all tests
-// npm run -- washtype.service.spec.ts to run this specific test file
+// npm run -- washtypes.service.spec.ts to run this specific test file
 describe('WashTypeService', () => {
   // region Variables
   let washTypeService: WashTypeService;

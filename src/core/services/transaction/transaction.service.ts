@@ -57,6 +57,7 @@ export class TransactionService {
     washType: string,
     location: string,
     customerType: string,
+    id: number,
   ): Promise<Pagination<TransactionModel>> {
     const queryBuilder = this.transactionRepository
       .createQueryBuilder('transaction')
