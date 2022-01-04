@@ -64,7 +64,7 @@ export class TransactionService {
       .leftJoinAndSelect('transaction.location', 'location')
       .leftJoinAndSelect('transaction.washType', 'washType')
       .leftJoinAndSelect('transaction.licensePlate', 'licensePlate')
-      .leftJoinAndSelect('licensePlate.customer', 'customer')
+      .leftJoinAndSelect('transaction.customer', 'customer')
       .leftJoinAndSelect('customer.subscription', 'subscription')
       .orderBy('transaction.timestamp', 'DESC');
 
@@ -105,6 +105,10 @@ export class TransactionService {
         customerType: `%${customerType}%`,
       });
     }
+
+    queryBuilder.andWhere('location.companyId = :id', {
+      id: id,
+    });
 
     return await paginate<TransactionModel>(queryBuilder, options);
   }
