@@ -10,7 +10,7 @@ import { NumberStringParam } from '../../../utilities/numberstringparam';
 import JwtAuthenticationGuard from '../../../../core/authentication/web/guards/jwt-auth.guard';
 import RequestWithCompany from '../../../../core/authentication/web/request-with-company.interface';
 
-@Controller('companies')
+@Controller('web/companies')
 export class CompaniesController {
   constructor(private service: CompanyService) {}
 

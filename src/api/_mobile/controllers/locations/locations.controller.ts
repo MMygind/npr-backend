@@ -4,7 +4,7 @@ import { ApiNoContentResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagg
 import JwtAuthenticationGuard from '../../../../core/authentication/mobile/guards/jwt-auth.guard';
 import RequestWithCustomer from '../../../../core/authentication/mobile/request-with-customer.interface';
 
-@Controller('locations')
+@Controller('mobile/locations')
 export class LocationsController {
   constructor(private service: LocationService) {
   }

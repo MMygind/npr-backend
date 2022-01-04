@@ -27,7 +27,7 @@ import { PlateDetectionDto } from 'src/api/dtos/plate-detection.dto';
 import JwtAuthenticationGuard from '../../../../core/authentication/web/guards/jwt-auth.guard';
 import RequestWithCompany from '../../../../core/authentication/web/request-with-company.interface';
 
-@Controller('transactions')
+@Controller('web/transactions')
 export class TransactionsController {
   constructor(private service: TransactionService) {}
 

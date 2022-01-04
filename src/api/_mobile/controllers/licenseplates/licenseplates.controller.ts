@@ -10,7 +10,7 @@ import { CreateLicensePlateDto } from '../../../dtos/create-licenseplate.dto';
 import JwtAuthenticationGuard from '../../../../core/authentication/mobile/guards/jwt-auth.guard';
 import RequestWithCustomer from '../../../../core/authentication/mobile/request-with-customer.interface';
 
-@Controller('licensePlates')
+@Controller('mobile/licensePlates')
 export class LicensePlatesController {
   constructor(private service: LicensePlateService) {
   }

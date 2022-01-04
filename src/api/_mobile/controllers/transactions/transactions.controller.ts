@@ -26,7 +26,7 @@ import RequestWithCustomer from '../../../../core/authentication/mobile/request-
 import { CreateTransactionDto } from '../../../dtos/create-transaction.dto';
 import { NumberStringParam } from '../../../utilities/numberstringparam';
 
-@Controller('transactions')
+@Controller('mobile/transactions')
 export class TransactionsController {
   constructor(private service: TransactionService) {
   }

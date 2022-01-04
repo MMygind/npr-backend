@@ -25,7 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { NumberStringParam } from 'src/api/utilities/numberstringparam';
 
-@Controller('customers')
+@Controller('web/customers')
 export class CustomersController {
   constructor(private service: CustomerService) { }
 
