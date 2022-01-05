@@ -25,7 +25,7 @@ export class LocationService {
   async getCompanyLocations(companyID: number): Promise<LocationModel[]> {
     const locations = await this.locationRepository.find({
       where: { company: { id: companyID } },
-      order: { name: 'ASC' },
+      order: { name: 'ASC' }
     });
     if (locations == undefined || locations.length == 0) {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
@@ -59,15 +59,11 @@ export class LocationService {
     dto: CreateLocationDto,
     companyID: number,
   ): Promise<LocationModel> {
-    if (dto.company.id !== companyID) {
-      throw new ForbiddenException(
-        `Not allowed to access company with ID ${dto.company.id}`,
-      );
-    }
-    dto.company = await this.companyService.getCompany(dto.company.id);
-    const newLocation = this.locationRepository.create(dto);
-    await this.locationRepository.save(newLocation);
-    return await this.getLocation(newLocation.id, companyID);
+    const company = await this.companyService.getCompany(companyID);
+    const newLocation: LocationModel = { ...dto, company: company, washTypes: [] }
+    const createdLocation = this.locationRepository.create(newLocation);
+    await this.locationRepository.save(createdLocation);
+    return await this.getLocation(createdLocation.id, companyID);
   }
 
   async updateLocation(

@@ -69,19 +69,6 @@ export class WashTypesController {
     );
   }
 
-  /*@Get(':id')
-  @ApiOperation({ summary: 'Get wash type with specified ID' })
-  @ApiOkResponse({ description: 'Wash type with specified ID returned' })
-  @ApiBadRequestResponse({
-    description: 'Failed to get wash type as request was malformed',
-  })
-  @ApiNotFoundResponse({ description: 'Wash type not found' })
-  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
-  async getWashType(@Param() params: NumberStringParam) {
-    const hardcodedCompanyID = 1;
-    return await this.service.getWashType(params.id, hardcodedCompanyID);
-  }*/
-
   @UseGuards(JwtAuthenticationGuard)
   @Post()
   @ApiOperation({ summary: 'Create new wash type' })

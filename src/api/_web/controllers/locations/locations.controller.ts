@@ -44,19 +44,6 @@ export class LocationsController {
     return await this.service.getCompanyLocations(company.id);
   }
 
-  /*@Get(':id')
-  @ApiOperation({ summary: 'Get location with specified ID' })
-  @ApiOkResponse({ description: 'Location with specified ID returned' })
-  @ApiBadRequestResponse({
-    description: 'Failed to get location as request was malformed',
-  })
-  @ApiNotFoundResponse({ description: 'Location not found' })
-  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
-  async getLocation(@Param() params: NumberStringParam) {
-    const hardcodedCompanyID = 1;
-    return await this.service.getLocation(params.id, hardcodedCompanyID);
-  }*/
-
   @UseGuards(JwtAuthenticationGuard)
   @Post()
   @ApiOperation({ summary: 'Create new location' })
