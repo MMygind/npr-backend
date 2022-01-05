@@ -23,6 +23,7 @@ import {
   ApiOperation,
   ApiResponse,
 } from '@nestjs/swagger';
+import { CompanyService } from "../../../../core/services/company/company.service";
 
 @Controller('web/customers')
 export class CustomersController {
