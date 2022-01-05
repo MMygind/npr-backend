@@ -37,11 +37,11 @@ describe('WashTypeService', () => {
   // region beforeEach
   beforeEach(async () => {
     // region TestingModule
-    find = jest.fn().mockImplementation(() => Promise.resolve(washTypes));
+    find = jest.fn().mockImplementation(() => washTypes);
     findOne = jest
       .fn()
       .mockImplementation((id: number) =>
-        Promise.resolve(washTypes.find((washType) => washType.id == id)),
+        washTypes.find((washType) => washType.id == id),
       );
     create = jest.fn().mockImplementation((dto: CreateWashTypeDto) => dto);
     save = jest.fn().mockImplementation((model: WashTypeModel) => {
@@ -278,6 +278,7 @@ describe('WashTypeService', () => {
 
     it('should throw a NotFoundException if single wash type with matching ID is not found', async () => {
       const highestID = 3;
+      findOne.mockReturnValue(null);
 
       await expect(
         washTypeService.getWashType(highestID + 1, company.id),
