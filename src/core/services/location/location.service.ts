@@ -26,6 +26,7 @@ export class LocationService {
     const locations = await this.locationRepository.find({
       where: { company: { id: companyID } },
       order: { name: 'ASC' },
+      relations: ['company']
     });
     if (locations == undefined || locations.length == 0) {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
