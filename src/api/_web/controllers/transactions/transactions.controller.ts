@@ -68,7 +68,7 @@ export class TransactionsController {
     );
   }
 
-  /*@Get(':id')
+  @Get(':id')
   @ApiOperation({ summary: 'Gets transaction with specified ID' })
   @ApiOkResponse({ description: 'Transaction with specified ID returned' })
   @ApiBadRequestResponse({
@@ -77,5 +77,5 @@ export class TransactionsController {
   @ApiNotFoundResponse({ description: 'Transaction not found' })
   async getTransactionById(@Param() params: NumberStringParam) {
     return await this.service.getTransaction(params.id);
-  }*/
+  }
 }

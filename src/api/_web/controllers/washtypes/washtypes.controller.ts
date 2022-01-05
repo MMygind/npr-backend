@@ -24,10 +24,30 @@ import { CreateWashTypeDto } from '../../../dtos/create-washtype.dto';
 import { UpdateWashTypeDto } from '../../../dtos/update-washtype.dto';
 import JwtAuthenticationGuard from '../../../../core/authentication/web/guards/jwt-auth.guard';
 import RequestWithCompany from '../../../../core/authentication/web/request-with-company.interface';
+import RequestWithCustomer from '../../../../core/authentication/mobile/request-with-customer.interface';
 
 @Controller('web/washtypes')
 export class WashTypesController {
   constructor(private service: WashTypeService) {}
+
+  @UseGuards(JwtAuthenticationGuard)
+  @Get()
+  @ApiOperation({
+    summary: 'Get all wash types for company with specified ID',
+  })
+  @ApiOkResponse({
+    description: 'All wash types for location with specified ID returned',
+  })
+  @ApiNoContentResponse({
+    description: 'Could not find wash types for location with specified ID',
+  })
+  @ApiForbiddenResponse({ description: 'Not allowed to access resource' })
+  async getCompanyWashTypes(@Req() request: RequestWithCustomer) {
+    const company = request.user;
+    return await this.service.getAllCompanyWashTypes(
+      company.id,
+    );
+  }
 
   @UseGuards(JwtAuthenticationGuard)
   @Get('/byLocation/:id')
