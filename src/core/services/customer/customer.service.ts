@@ -13,12 +13,13 @@ import { CustomerModel } from '../../models/customer.model';
 import { UpdateCustomerDto } from '../../../api/dtos/update-customer.dto';
 import { IPaginationOptions, paginate, Pagination } from "nestjs-typeorm-paginate";
 import { CreateCustomerDto } from 'src/api/dtos/create-customer.dto';
+import { CompanyService } from "../company/company.service";
 
 @Injectable()
 export class CustomerService {
   constructor(
     @InjectRepository(CustomerEntity)
-    private customerRepository: Repository<CustomerEntity>,
+    private customerRepository: Repository<CustomerEntity>
   ) { }
 
   async getById(id: number) {
@@ -67,22 +68,23 @@ export class CustomerService {
       .leftJoinAndSelect('customer.licensePlates', 'licensePlates')
       .orderBy('customer.name', 'ASC');
 
+    query.where('customer.company.id = :id', {id})
+
     if (active != null && subscription != null) {
       query
-        .where('customer.active = :active', { active })
+        .andWhere('customer.active = :active', { active })
         .andWhere('subscription.name = :subscription', {
           subscription,
         });
     } else if (active != null && subscription == null) {
-      query.where('customer.active = :active', { active });
+      query.andWhere('customer.active = :active', { active });
     } else if (subscription != null && active == null) {
-      query.where('subscription.name = :subscription', {
+      query.andWhere('subscription.name = :subscription', {
         subscription,
       });
     }
 
     if (queryValue) {
-      if (active != null || subscription != null) {
         query.andWhere(
           new Brackets((qb) => {
             qb.where('LOWER(customer.name) LIKE :name', {
@@ -96,21 +98,6 @@ export class CustomerService {
               });
           }),
         );
-      } else {
-        query.where(
-          new Brackets((qb) => {
-            qb.where('LOWER(customer.name) LIKE :name', {
-              name: `%${queryValue}%`,
-            })
-              .orWhere('LOWER(customer.email) LIKE :email', {
-                email: `%${queryValue}%`,
-              })
-              .orWhere('LOWER(customer.phoneNumber) LIKE :phoneNumber', {
-                phoneNumber: `%${queryValue}%`,
-              });
-          }),
-        );
-      }
     }
 
     return await paginate<CustomerModel>(query, options);
