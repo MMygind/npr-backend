@@ -10,10 +10,6 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateLocationDto {
-  @IsNotEmpty()
-  @ApiProperty({ description: 'Must have positive integer property "id"' })
-  company: CompanyModel;
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
