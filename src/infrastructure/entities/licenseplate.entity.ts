@@ -13,7 +13,7 @@ export class LicensePlateEntity {
   @PrimaryGeneratedColumn()
   public id: number;
 
-  @Column()
+  @Column({unique: true})
   public licensePlate: string;
 
   @ManyToOne(

@@ -11,9 +11,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WashTypeEntity } from '../../../infrastructure/entities/washtype.entity';
 import { Repository } from 'typeorm';
 import { WashTypeModel } from '../../models/washtype.model';
+import { LocationService } from '../location/location.service';
 import { CreateWashTypeDto } from '../../../api/dtos/create-washtype.dto';
 import { UpdateWashTypeDto } from '../../../api/dtos/update-washtype.dto';
-import { LocationService } from '../location/location.service';
+import { CompanyService } from '../company/company.service';
 
 @Injectable()
 export class WashTypeService {
@@ -21,6 +22,7 @@ export class WashTypeService {
     @InjectRepository(WashTypeEntity)
     private washTypeRepository: Repository<WashTypeEntity>,
     private locationService: LocationService,
+    private companyService: CompanyService
   ) {}
 
   async getAllWashTypes(): Promise<WashTypeModel[]> {
@@ -29,6 +31,19 @@ export class WashTypeService {
       throw new HttpException('No elements found', HttpStatus.NO_CONTENT);
     }
     return washTypes;
+  }
+
+  async getAllCompanyWashTypes(companyId: number): Promise<WashTypeModel[]> {
+    await this.companyService.getCompany(companyId)
+    const queryBuilder = await this.washTypeRepository
+      .createQueryBuilder('washType')
+      .leftJoinAndSelect('washType.location', 'location');
+
+    queryBuilder.where('location.companyId = :companyId', {
+      companyId: companyId,
+    });
+
+    return queryBuilder.getMany();
   }
 
   async getLocationWashTypes(

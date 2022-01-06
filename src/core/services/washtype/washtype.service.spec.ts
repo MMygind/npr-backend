@@ -16,9 +16,10 @@ import {
 } from '@nestjs/common';
 import { UpdateWashTypeDto } from '../../../api/dtos/update-washtype.dto';
 import { UpdateResult } from 'typeorm';
+import { CompanyService } from "../company/company.service";
 
 // npm run test to run all tests
-// npm run -- washtype.service.spec.ts to run this specific test file
+// npm run test -- washtypes.service.spec.ts to run this specific test file
 describe('WashTypeService', () => {
   // region Variables
   let washTypeService: WashTypeService;
@@ -37,11 +38,11 @@ describe('WashTypeService', () => {
   // region beforeEach
   beforeEach(async () => {
     // region TestingModule
-    find = jest.fn().mockImplementation(() => Promise.resolve(washTypes));
+    find = jest.fn().mockImplementation(() => washTypes);
     findOne = jest
       .fn()
       .mockImplementation((id: number) =>
-        Promise.resolve(washTypes.find((washType) => washType.id == id)),
+        washTypes.find((washType) => washType.id == id),
       );
     create = jest.fn().mockImplementation((dto: CreateWashTypeDto) => dto);
     save = jest.fn().mockImplementation((model: WashTypeModel) => {
@@ -69,6 +70,10 @@ describe('WashTypeService', () => {
           useValue: {
             getLocation,
           },
+        },
+        {
+          provide: CompanyService,
+          useValue: {}
         },
         {
           provide: getRepositoryToken(WashTypeEntity),
