@@ -6,7 +6,7 @@ import JwtAuthenticationGuard from '../../../../core/authentication/mobile/guard
 import RequestWithCustomer from '../../../../core/authentication/mobile/request-with-customer.interface';
 
 @Controller('mobile/washtypes')
-export class MobileWashTypesController {
+export class WashTypesController {
   constructor(private service: WashTypeService) {
   }
 
@@ -26,7 +26,7 @@ export class MobileWashTypesController {
     const customer = request.user;
     return await this.service.getLocationWashTypes(
       params.id,
-      customer.company.id,
+      customer.companyId,
     );
   }
 }

@@ -1,18 +1,19 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionEntity } from '../../../infrastructure/entities/transaction.entity';
-import { CustomerModule } from '../../_web/controllers/customer.module';
-import { LocationModule } from '../../_web/controllers/location.module';
 import { TransactionService } from '../../../core/services/transaction/transaction.service';
 import { TransactionsController } from './transactions/transactions.controller';
+import { IotController } from '../../_iot/controllers/iot.controller';
+import { MobileCustomerModule } from './mobile-customer.module';
+import { MobileLocationModule } from './mobile-location.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([TransactionEntity]),
-    CustomerModule,
-    LocationModule,
+    MobileCustomerModule,
+    MobileLocationModule
   ],
-  controllers: [TransactionsController],
+  controllers: [TransactionsController, IotController],
   providers: [TransactionService],
 })
 export class MobileTransactionModule {}

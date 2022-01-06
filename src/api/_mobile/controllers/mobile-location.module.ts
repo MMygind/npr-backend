@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LocationEntity } from '../../../infrastructure/entities/location.entity';
-import { CompanyModule } from '../../_web/controllers/company.module';
 import { LocationService } from '../../../core/services/location/location.service';
 import { LocationsController } from './locations/locations.controller';
+import { CompanyModule } from '../../_web/controllers/company.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([LocationEntity]), CompanyModule],
