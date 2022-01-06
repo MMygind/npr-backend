@@ -27,19 +27,16 @@ export class MobileAuthenticationService {
             if (error?.code === "23505") { // unique key constraint for Postgres
                 throw new HttpException('User with that email already exists', HttpStatus.BAD_REQUEST);
             }
-            console.log("Error caught (" + error.code + "): " + error);
             throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     public async getAuthenticatedCustomer(email: string, plainTextPassword: string) {
         try {
-            console.log("customer login");
             const customer = await this.customerService.getByEmail(email);
 
             await this.verifyPassword(plainTextPassword, customer.password);
             customer.password = undefined;
-            console.log("User id " + customer.id + " logged on mobile frontend");
             return customer;
         } catch (error) {
             throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);

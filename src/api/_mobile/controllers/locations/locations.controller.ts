@@ -20,6 +20,6 @@ export class LocationsController {
   })
   async getCompanyLocations(@Req() request: RequestWithCustomer) {
     const customer = request.user;
-    return await this.service.getCompanyLocations(customer.company.id);
+    return await this.service.getCompanyLocations(customer.companyId);
   }
 }

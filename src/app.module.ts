@@ -17,7 +17,6 @@ import { MobileSubscriptionModule } from './api/_mobile/controllers/mobile-subsc
 import { MobileLocationModule } from './api/_mobile/controllers/mobile-location.module';
 import { MobileTransactionModule } from './api/_mobile/controllers/mobile-transaction.module';
 import { MobileWashTypeModule } from './api/_mobile/controllers/mobile-washtype.module';
-import { IotModule } from './api/_iot/iot.module';
 
 @Module({
   imports: [
@@ -51,7 +50,6 @@ import { IotModule } from './api/_iot/iot.module';
     MobileLocationModule,
     MobileTransactionModule,
     MobileWashTypeModule,
-    IotModule,
   ],
   controllers: [],
   providers: [],
